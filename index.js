@@ -1,5 +1,4 @@
 import express from "express";
-import mongoose from "mongoose";
 import { PORT, DB_URL } from "./constans/url.js";
 import routerUserInfo from "./routes/UserInfo.js";
 import { ROUTE_API } from "./constans/routes.js";
@@ -15,7 +14,6 @@ app.listen(PORT, () => {
 
 async function startApp() {
   try {
-    await mongoose.connect(DB_URL, { useNewUrlParser: true });
     app.listen(PORT, () => console.log("server is working on port", PORT));
   } catch (e) {
     console.log(e);
