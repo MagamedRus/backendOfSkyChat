@@ -1,5 +1,5 @@
 import express from "express";
-import { PORT, DB_URL } from "./constans/url.js";
+import { PORT } from "./constans/config.js";
 import routerUserInfo from "./routes/UserInfo.js";
 import { ROUTE_API } from "./constans/routes.js";
 
