@@ -9,7 +9,7 @@ class UserInfoController {
     const { firstName, secondName, lastName } = req.body; //name
     const { registrationDate, birthdate } = req.body; // dates
     const { password, birthPlace } = req.body; //other
-    console.log(login);
+
     pool.getConnection((err, conn) => {
       if (err) {
         res.send("Error occured");
