@@ -1,6 +1,4 @@
-import mysql from "mysql";
-import { MYSQL_CONFIG } from "../constans/config.js";
-import { NOT_FOUND_ID_EXCEPTION } from "../constans/exceptions.js";
+import { NOT_FOUND_ID_EXCEPTION } from "../constans/types/exceptions.js";
 import { getDBConn } from "../common/sqlConnection.js";
 import { readUserDataRequest } from "../dbCreateRequests/UserInfoRequests.js";
 
