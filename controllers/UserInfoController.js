@@ -1,14 +1,36 @@
+import mysql from "mysql";
+import { MYSQL_CONFIG } from "../constans/config.js";
 import { NOT_FOUND_ID_EXCEPTION } from "../constans/exceptions.js";
+import { getDBConn } from "../common/sqlConnection.js";
+import { readUserDataRequest } from "../dbCreateRequests/UserInfoRequests.js";
 
 class UserInfoController {
   async create(req, res) {
-    try {
-      const { name, secondName, birthday, gender, dateReg, password, picture } =
-        req.body;
-      res.json(userInfo);
-    } catch (e) {
-      res.status(500).json(e);
-    }
+    const pool = getDBConn();
+    const { id, login, email } = req.body; //unique value`s
+    const { firstName, secondName, lastName } = req.body; //name
+    const { registrationDate, birthdate } = req.body; // dates
+    const { password, birthPlace } = req.body; //other
+    console.log(login);
+    pool.getConnection((err, conn) => {
+      if (err) {
+        res.send("Error occured");
+      } else {
+        pool.query(readUserDataRequest(), (reqError, records, fields) => {
+          console.log("DB is working succesfull");
+          res.send(records);
+        });
+      }
+    });
+    // try {
+    //   const { login, email } = res.body; //unique value`s
+    //   const { firstName, secondName, lastName } = res.body; //name
+    //   const { registrationDate, birthdate } = res.body; // dates
+    //   const { password, birthPlace } = res.body; //other
+    //   res.send({a: id});
+    // } catch (e) {
+    //   res.status(500).json(e);
+    // }
   }
 
   async getAll(req, res) {}
