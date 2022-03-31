@@ -1,34 +1,36 @@
 import { NOT_FOUND_ID_EXCEPTION } from "../constans/types/exceptions.js";
 import { getDBConn } from "../common/sqlConnection.js";
-import { readUserDataRequest } from "../dbCreateRequests/UserInfoRequests.js";
+import { createUserDataRequest } from "../dbCreateRequests/UserInfoRequests.js";
+import { validUserInfoPostReq } from "../common/reqValidations/userInfoValidations.js";
 
 class UserInfoController {
   async create(req, res) {
-    const pool = getDBConn();
-    const { id, login, email } = req.body; //unique value`s
-    const { firstName, secondName, lastName } = req.body; //name
-    const { registrationDate, birthdate } = req.body; // dates
-    const { password, birthPlace } = req.body; //other
-
-    pool.getConnection((err, conn) => {
-      if (err) {
-        res.send("Error occured");
-      } else {
-        pool.query(readUserDataRequest(), (reqError, records, fields) => {
-          console.log("DB is working succesfull");
-          res.send(records);
+    const data = req.body;
+    try {
+      const validErrorUserInfoRe = validUserInfoPostReq(data);
+      if (validErrorUserInfoRe == null) {
+        const pool = getDBConn();
+        pool.getConnection((err, conn) => {
+          if (err) {
+            res.status(501).json(err);
+          }
+          pool.query(
+            createUserDataRequest(data),
+            (reqError, records, fields) => {
+              console.log(reqError);
+              if (reqError != null) {
+                res.status(501).json(reqError);
+              }
+              res.send(records);
+            }
+          );
         });
+      } else {
+        res.status(400).json({ message: validErrorUserInfoRe });
       }
-    });
-    // try {
-    //   const { login, email } = res.body; //unique value`s
-    //   const { firstName, secondName, lastName } = res.body; //name
-    //   const { registrationDate, birthdate } = res.body; // dates
-    //   const { password, birthPlace } = res.body; //other
-    //   res.send({a: id});
-    // } catch (e) {
-    //   res.status(500).json(e);
-    // }
+    } catch (e) {
+      res.status(500).json(e);
+    }
   }
 
   async getAll(req, res) {}
