@@ -15,12 +15,25 @@ import {
 import { CURRENT_YEAR, CURRENT_MONTH, CURRENT_DAY } from "../constans/date.js";
 import { getMonthsLengthList } from "../common/date.js";
 
+export const isString = (variable) => {
+  if (typeof variable !== "string") {
+    return false;
+  }
+  return true;
+};
+
 export const isValidEMail = (email) => {
+  if (!isString(email)) {
+    return false;
+  }
   const emailLength = email.length;
   return mailReg.test(email) && emailLength < MAX_MAIL_LENGTH;
 };
 
 export const isValidLogin = (login) => {
+  if (!isString(login)) {
+    return false;
+  }
   const logLength = login.length;
   const isGoodLength =
     logLength <= MAX_LOGIN_LENGTH && logLength >= MIN_LOGIN_LENGTH;
@@ -28,6 +41,9 @@ export const isValidLogin = (login) => {
 };
 
 export const isValidName = (name) => {
+  if (!isString(name)) {
+    return false;
+  }
   const logLength = name.length;
   const isGoodLength =
     logLength <= MAX_NAME_LENGTH && logLength >= MIN_NAME_LENGTH;
@@ -36,7 +52,9 @@ export const isValidName = (name) => {
 
 export const isValidDate = (date) => {
   let isValid = false; // result
-
+  if (!isString(date)) {
+    return false;
+  }
   if (dateReg.test(date)) {
     /** Decomposing parametr date */
     const parts = date.split(".");
