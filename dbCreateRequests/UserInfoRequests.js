@@ -17,15 +17,15 @@ export const createUserDataRequest = (data) => {
   const { password, birthPlace } = data; //other
 
   //first part
-  const leftPartRequest = `${INSERT} ${INTO} ${USER_DATA} ${userDataTableScheme}`;
+  const leftPartRequest = `${INSERT} ${INTO} ${"`"}${USER_DATA}${"`"} ${userDataTableScheme}`;
 
   //request body
   const bodyRequestId = id ? `'${id}'` : NULL;
-  const bodyRequestUniques = `${bodyRequestId} '${login}' '${email}' '${password}'`;
-  const bodyRequestName = `'${firstName}' '${secondName}' '${lastName}'`;
-  const bodyRequestDates = `'${registrationDate}' '${birthPlace}' '${birthdate}'`;
+  const bodyRequestUniques = `${bodyRequestId}, '${login}', '${email}', '${password}',`;
+  const bodyRequestName = `'${firstName}', '${secondName}', '${lastName}',`;
+  const bodyRequestDates = `'${registrationDate}', '${birthPlace}', '${birthdate}'`;
 
-  return `${leftPartRequest} ${VALUES} ${bodyRequestUniques} ${bodyRequestName} ${bodyRequestDates}`;
+  return `${leftPartRequest} ${VALUES} (${bodyRequestUniques} ${bodyRequestName} ${bodyRequestDates})`;
 };
 
 export const readUserDataRequest = () =>
