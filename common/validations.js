@@ -3,6 +3,9 @@ import {
   latinAndNumbersReg,
   latinAndCyrrilReg,
   dateReg,
+  lettersAndNotOnlyReg,
+  numberndNotOnlyReg,
+  latinCyrrilNumbReg,
 } from "../constans/validations/regularExpressions.js";
 import {
   MIN_YEAR,
@@ -11,6 +14,8 @@ import {
   MIN_LOGIN_LENGTH,
   MAX_NAME_LENGTH,
   MIN_NAME_LENGTH,
+  MIN_PASSWORD_LENGTH,
+  MIN_LENGTH_BIRTHPLACE,
 } from "../constans/validations/userInfo.js";
 import { CURRENT_YEAR, CURRENT_MONTH, CURRENT_DAY } from "../constans/date.js";
 import { getMonthsLengthList } from "../common/date.js";
@@ -84,4 +89,31 @@ export const isValidDate = (date) => {
   }
 
   return isValid;
+};
+
+export const isValidPassword = (password) => {
+  let isValid = false; // result
+
+  if (isString(password)) {
+    const passwordLength = password.length;
+    const isGoodLength = passwordLength > MIN_PASSWORD_LENGTH;
+    const isIncludeNumbers = numberndNotOnlyReg.test(password);
+    const isIncludeLetters = lettersAndNotOnlyReg.test(password);
+
+    if (isGoodLength && isIncludeLetters && isIncludeNumbers) {
+      isValid = true;
+    }
+  }
+
+  return isValid;
+};
+
+export const isValidBirthplace = (birthPlace) => {
+  if (!isString(birthPlace)) {
+    return false;
+  }
+  const birthPlaceLength = birthPlace.length;
+  const isGoodLength = birthPlaceLength > MIN_LENGTH_BIRTHPLACE;
+
+  return latinCyrrilNumbReg.test(birthPlace) && isGoodLength;
 };

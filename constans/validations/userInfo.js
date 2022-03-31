@@ -4,3 +4,5 @@ export const MAX_LOGIN_LENGTH = 18;
 export const MIN_LOGIN_LENGTH = 2;
 export const MAX_NAME_LENGTH = 24;
 export const MIN_NAME_LENGTH = 2;
+export const MIN_PASSWORD_LENGTH = 6;
+export const MIN_LENGTH_BIRTHPLACE = 2;
