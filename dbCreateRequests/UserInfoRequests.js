@@ -38,3 +38,6 @@ export const getUserByIdRequest = (id) =>
 
 export const getUserByEmailRequest = (email) =>
   `${SELECT} ${ALL} ${FROM} ${USER_DATA} ${WHERE} ${"`email`"}="${email}"`;
+
+export const getUserByLoginRequest = (login) =>
+  `${SELECT} ${ALL} ${FROM} ${USER_DATA} ${WHERE} ${"`login`"}="${login}"`;
