@@ -1,14 +1,14 @@
 import { NOT_FOUND_ID_EXCEPTION } from "../constans/types/exceptions.js";
 import { getDBConn } from "../common/sqlConnection.js";
-import { createUserDataRequest } from "../dbCreateRequests/UserInfoRequests.js";
+import { createUserDataRequest, readUserDataRequest } from "../dbCreateRequests/UserInfoRequests.js";
 import { validUserInfoPostReq } from "../common/reqValidations/userInfoValidations.js";
 
 class UserInfoController {
   async create(req, res) {
     const data = req.body;
     try {
-      const validErrorUserInfoRe = validUserInfoPostReq(data);
-      if (validErrorUserInfoRe == null) {
+      const validErrorUserInfoReq = validUserInfoPostReq(data);
+      if (validErrorUserInfoReq == null) {
         const pool = getDBConn();
         pool.getConnection((err, conn) => {
           if (err) {
@@ -17,7 +17,6 @@ class UserInfoController {
           pool.query(
             createUserDataRequest(data),
             (reqError, records, fields) => {
-              console.log(reqError);
               if (reqError != null) {
                 res.status(501).json(reqError);
               }
@@ -26,14 +25,27 @@ class UserInfoController {
           );
         });
       } else {
-        res.status(400).json({ message: validErrorUserInfoRe });
+        res.status(400).json({ message: validErrorUserInfoReq });
       }
     } catch (e) {
       res.status(500).json(e);
     }
   }
 
-  async getAll(req, res) {}
+  async getAll(req, res) {
+    const pool = getDBConn();
+    pool.getConnection((err, conn) => {
+      if (err) {
+        res.status(501).json(err);
+      }
+      pool.query(readUserDataRequest(), (reqError, records, fields) => {
+        if (reqError != null) {
+          res.status(501).json(reqError);
+        }
+        res.send(records);
+      });
+    });
+  }
 
   async getById(req, res) {
     try {
