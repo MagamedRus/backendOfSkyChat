@@ -5,3 +5,4 @@ export const FROM = "FROM";
 export const ALL = "*";
 export const SELECT = "SELECT";
 export const NULL = "NULL";
+export const WHERE = 'WHERE';

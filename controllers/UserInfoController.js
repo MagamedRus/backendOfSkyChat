@@ -1,6 +1,10 @@
 import { NOT_FOUND_ID_EXCEPTION } from "../constans/types/exceptions.js";
 import { getDBConn } from "../common/sqlConnection.js";
-import { createUserDataRequest, readUserDataRequest } from "../dbCreateRequests/UserInfoRequests.js";
+import {
+  createUserDataRequest,
+  readUserDataRequest,
+  getUserByIdRequest,
+} from "../dbCreateRequests/UserInfoRequests.js";
 import { validUserInfoPostReq } from "../common/reqValidations/userInfoValidations.js";
 
 class UserInfoController {
@@ -53,6 +57,18 @@ class UserInfoController {
       if (!id) {
         res.status(400).json({ message: NOT_FOUND_ID_EXCEPTION });
       }
+      const pool = getDBConn();
+      pool.getConnection((err, conn) => {
+        if (err) {
+          res.status(501).json(err);
+        }
+        pool.query(getUserByIdRequest(id), (reqError, records, fields) => {
+          if (reqError != null) {
+            res.status(501).json(reqError);
+          }
+          res.send(records);
+        });
+      });
       // return res.json();
     } catch (e) {
       res.status(500).json(e);

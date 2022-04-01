@@ -6,9 +6,11 @@ import {
   SELECT,
   ALL,
   FROM,
+  WHERE,
 } from "../constans/db/dbRequestElements.js";
 import { USER_DATA } from "../constans/db/dbTableNames.js";
 import { userDataTableScheme } from "../constans/db/dbTableSchemes.js";
+//Todo: refactor imports
 
 export const createUserDataRequest = (data) => {
   const { id, login, email } = data; //unique value`s
@@ -31,4 +33,5 @@ export const createUserDataRequest = (data) => {
 export const readUserDataRequest = () =>
   `${SELECT} ${ALL} ${FROM} ${USER_DATA}`;
 
-//Todo: add delete and change
+export const getUserByIdRequest = (id) =>
+  `${SELECT} ${ALL} ${FROM} ${USER_DATA} ${WHERE} ${"`id`"}=${id} `;
