@@ -79,10 +79,9 @@ export const isValidDate = (date) => {
     const isGoodMaxMonth = isLastYear ? month <= CURRENT_MONTH : month <= 12;
     const isGoodMonth = month > 0 && isGoodMaxMonth;
     const isGoodMaxDay = isCurrentMonth
-      ? day <= monthLengthList[month - 1]
-      : day <= CURRENT_DAY;
+      ? day <= CURRENT_DAY
+      : day <= monthLengthList[month - 1];
     const isGoodDay = day > 0 && isGoodMaxDay;
-
     if (isGoodMonth && isGoodYear && isGoodDay) {
       isValid = true;
     }
