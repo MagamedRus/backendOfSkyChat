@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { ROUTE_USER_INFO, ROUTE_USER_BY_INFO_ID } from "../constans/routes.js";
+import {
+  ROUTE_USER_INFO,
+  ROUTE_USER_INFO_BY_ID,
+  ROUTE_USER_INFO_BY_EMAIL,
+} from "../constans/routes.js";
 import UserInfoController from "../controllers/UserInfoController.js";
 
 const routerUserInfo = new Router();
@@ -11,8 +15,12 @@ routerUserInfo.post(ROUTE_USER_INFO, (req, res) =>
 routerUserInfo.get(ROUTE_USER_INFO, (req, res) =>
   userController.getAll(req, res)
 );
-routerUserInfo.get(ROUTE_USER_BY_INFO_ID, (req, res) =>
+routerUserInfo.get(ROUTE_USER_INFO_BY_ID, (req, res) =>
   userController.getById(req, res)
+);
+
+routerUserInfo.get(ROUTE_USER_INFO_BY_EMAIL, (req, res) =>
+  userController.getByEmail(req, res)
 );
 
 export default routerUserInfo;

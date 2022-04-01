@@ -34,4 +34,7 @@ export const readUserDataRequest = () =>
   `${SELECT} ${ALL} ${FROM} ${USER_DATA}`;
 
 export const getUserByIdRequest = (id) =>
-  `${SELECT} ${ALL} ${FROM} ${USER_DATA} ${WHERE} ${"`id`"}=${id} `;
+  `${SELECT} ${ALL} ${FROM} ${USER_DATA} ${WHERE} ${"`id`"}=${id}`;
+
+export const getUserByEmailRequest = (email) =>
+  `${SELECT} ${ALL} ${FROM} ${USER_DATA} ${WHERE} ${"`email`"}="${email}"`;

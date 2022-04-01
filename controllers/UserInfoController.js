@@ -1,9 +1,13 @@
-import { NOT_FOUND_ID_EXCEPTION } from "../constans/types/exceptions.js";
+import {
+  NOT_FOUND_ID_EXCEPTION,
+  NOT_FOUND_EMAIL_EXCEPTION,
+} from "../constans/types/exceptions.js";
 import { getDBConn } from "../common/sqlConnection.js";
 import {
   createUserDataRequest,
   readUserDataRequest,
   getUserByIdRequest,
+  getUserByEmailRequest,
 } from "../dbCreateRequests/UserInfoRequests.js";
 import { validUserInfoPostReq } from "../common/reqValidations/userInfoValidations.js";
 
@@ -66,8 +70,34 @@ class UserInfoController {
           if (reqError != null) {
             res.status(501).json(reqError);
           }
-          res.send(records);
+          res.send(records[0]);
         });
+      });
+      // return res.json();
+    } catch (e) {
+      res.status(500).json(e);
+    }
+  }
+  async getByEmail(req, res) {
+    try {
+      const { email } = req.params;
+      if (!email) {
+        res.status(400).json({ message: NOT_FOUND_EMAIL_EXCEPTION });
+      }
+      const pool = getDBConn();
+      pool.getConnection((err, conn) => {
+        if (err) {
+          res.status(501).json(err);
+        }
+        pool.query(
+          getUserByEmailRequest(email),
+          (reqError, records, fields) => {
+            if (reqError != null) {
+              res.status(501).json(reqError);
+            }
+            res.send(records[0]);
+          }
+        );
       });
       // return res.json();
     } catch (e) {
