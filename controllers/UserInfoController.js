@@ -21,16 +21,18 @@ class UserInfoController {
         pool.getConnection((err, conn) => {
           if (err) {
             res.status(501).json(err);
-          }
-          pool.query(
-            createUserDataRequest(data),
-            (reqError, records, fields) => {
-              if (reqError != null) {
-                res.status(501).json(reqError);
+          } else {
+            pool.query(
+              createUserDataRequest(data),
+              (reqError, records, fields) => {
+                if (reqError != null) {
+                  res.status(501).json(reqError);
+                } else {
+                  res.send(records);
+                }
               }
-              res.send(records);
-            }
-          );
+            );
+          }
         });
       } else {
         res.status(400).json({ message: validErrorUserInfoReq });
@@ -45,61 +47,62 @@ class UserInfoController {
     pool.getConnection((err, conn) => {
       if (err) {
         res.status(501).json(err);
+      } else {
+        pool.query(readUserDataRequest(), (reqError, records, fields) => {
+          if (reqError != null) {
+            res.status(501).json(reqError);
+          } else res.send(records);
+        });
       }
-      pool.query(readUserDataRequest(), (reqError, records, fields) => {
-        if (reqError != null) {
-          res.status(501).json(reqError);
-        }
-        res.send(records);
-      });
     });
   }
 
   async getById(req, res) {
     try {
-      const { id } = req.params;
+      const { id } = req.body;
       if (!id) {
         res.status(400).json({ message: NOT_FOUND_ID_EXCEPTION });
-      }
-      const pool = getDBConn();
-      pool.getConnection((err, conn) => {
-        if (err) {
-          res.status(501).json(err);
-        }
-        pool.query(getUserByIdRequest(id), (reqError, records, fields) => {
-          if (reqError != null) {
-            res.status(501).json(reqError);
+      } else {
+        const pool = getDBConn();
+        pool.getConnection((err, conn) => {
+          if (err) {
+            res.status(501).json(err);
+          } else {
+            pool.query(getUserByIdRequest(id), (reqError, records, fields) => {
+              if (reqError != null) {
+                res.status(501).json(reqError);
+              }
+              res.send(records[0]);
+            });
           }
-          res.send(records[0]);
         });
-      });
-      // return res.json();
+      }
     } catch (e) {
       res.status(500).json(e);
     }
   }
   async getByEmail(req, res) {
     try {
-      const { email } = req.params;
+      const { email } = req.body;
       if (!email) {
         res.status(400).json({ message: NOT_FOUND_EMAIL_EXCEPTION });
-      }
-      const pool = getDBConn();
-      pool.getConnection((err, conn) => {
-        if (err) {
-          res.status(501).json(err);
-        }
-        pool.query(
-          getUserByEmailRequest(email),
-          (reqError, records, fields) => {
-            if (reqError != null) {
-              res.status(501).json(reqError);
-            }
-            res.send(records[0]);
+      } else {
+        const pool = getDBConn();
+        pool.getConnection((err, conn) => {
+          if (err) {
+            res.status(501).json(err);
           }
-        );
-      });
-      // return res.json();
+          pool.query(
+            getUserByEmailRequest(email),
+            (reqError, records, fields) => {
+              if (reqError != null) {
+                res.status(501).json(reqError);
+              }
+              res.send(records[0]);
+            }
+          );
+        });
+      }
     } catch (e) {
       res.status(500).json(e);
     }
