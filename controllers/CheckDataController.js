@@ -27,7 +27,6 @@ class CheckDataController {
                 if (reqError != null) {
                   res.status(501).json(reqError);
                 } else if (records[0]) {
-                  console.log(records[0]);
                   res.json({ isExist: true });
                 } else {
                   res.json({ isExist: false });
