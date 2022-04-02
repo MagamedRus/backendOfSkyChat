@@ -27,9 +27,10 @@ class CheckDataController {
                 if (reqError != null) {
                   res.status(501).json(reqError);
                 } else if (records[0]) {
-                  res.send({ isExist: true });
+                  console.log(records[0]);
+                  res.json({ isExist: true });
                 } else {
-                  res.send({ isExist: false });
+                  res.json({ isExist: false });
                 }
               }
             );
@@ -56,9 +57,9 @@ class CheckDataController {
               if (reqError != null) {
                 res.status(501).json(reqError);
               } else if (records[0]) {
-                res.send({ isExist: true });
+                res.json({ isExist: true });
               } else {
-                res.send({ isExist: false });
+                res.json({ isExist: false });
               }
             });
           }
@@ -92,14 +93,14 @@ class CheckDataController {
             }
             if (!records[0]) {
               result.userIsNotExist = true;
-              res.send(result);
+              res.json(result);
             }
             if (records[0].password === password) {
               result.success = true;
-              res.send(result);
+              res.json(result);
             } else {
               result.incorrectPassword = true;
-              res.send(result);
+              res.json(result);
             }
           });
         });

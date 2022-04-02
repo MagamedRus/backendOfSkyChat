@@ -10,7 +10,7 @@ import CheckDataController from "../controllers/CheckDataController.js";
 const routerCheckData = new Router();
 const userController = new CheckDataController();
 
-routerCheckData.get(`${ROUTE_CHECK}${ROUTE_USER_EMAIL}`, (req, res) =>
+routerCheckData.post(`${ROUTE_CHECK}${ROUTE_USER_EMAIL}`, (req, res) =>
   userController.checkUserByEmail(req, res)
 );
 routerCheckData.get(ROUTE_CHECK + ROUTE_USER_LOGIN, (req, res) =>
