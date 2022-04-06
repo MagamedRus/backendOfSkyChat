@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "check": "nodemon common/reqValidations/userInfoValidations.js"
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "type": "module",
