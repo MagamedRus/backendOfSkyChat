@@ -13,7 +13,7 @@ import {
   INCORRECT_FIRST_NAME,
   INCORRECT_SECOND_NAME,
   INCORRECT_LAST_NAME,
-  INCORRECT_BIRTHDATE,
+  INCORRECT_BIRTHDAY,
   INCORRECT_REGISTRATION_DATE,
   INCORRECT_PASSWORD,
 } from "../../constans/types/exceptions.js";
@@ -33,8 +33,8 @@ export const validUserInfoPostReq = (userInfoObj) => {
     errorType = INCORRECT_LAST_NAME;
   } else if (!isValidDate(userInfoObj.registrationDate)) {
     errorType = INCORRECT_REGISTRATION_DATE;
-  } else if (!isValidDate(userInfoObj.birthdate)) {
-    errorType = INCORRECT_BIRTHDATE;
+  } else if (!isValidDate(userInfoObj.birthday)) {
+    errorType = INCORRECT_BIRTHDAY;
   } else if (!isValidPassword(userInfoObj.password)) {
     errorType = INCORRECT_PASSWORD;
   } else if (

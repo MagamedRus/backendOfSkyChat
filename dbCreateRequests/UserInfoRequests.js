@@ -15,7 +15,7 @@ import { userDataTableScheme } from "../constans/db/dbTableSchemes.js";
 export const createUserDataRequest = (data) => {
   const { id, login, email } = data; //unique value`s
   const { firstName, secondName, lastName } = data; //name
-  const { registrationDate, birthdate } = data; // dates
+  const { registrationDate, birthday } = data; // dates
   const { password, birthPlace } = data; //other
 
   //first part
@@ -25,7 +25,7 @@ export const createUserDataRequest = (data) => {
   const bodyRequestId = id ? `'${id}'` : NULL;
   const bodyRequestUniques = `${bodyRequestId}, '${login}', '${email}', '${password}',`;
   const bodyRequestName = `'${firstName}', '${secondName}', '${lastName}',`;
-  const bodyRequestDates = `'${registrationDate}', '${birthPlace}', '${birthdate}'`;
+  const bodyRequestDates = `'${registrationDate}', '${birthPlace}', '${birthday}'`;
 
   return `${leftPartRequest} ${VALUES} (${bodyRequestUniques} ${bodyRequestName} ${bodyRequestDates})`;
 };
