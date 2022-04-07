@@ -10,6 +10,7 @@ import {
   getUserByEmailRequest,
 } from "../dbCreateRequests/UserInfoRequests.js";
 import { validUserInfoPostReq } from "../common/reqValidations/userInfoValidations.js";
+import bcrypt from "bcryptjs";
 
 class UserInfoController {
   async create(req, res) {
@@ -18,6 +19,7 @@ class UserInfoController {
       const validErrorUserInfoReq = validUserInfoPostReq(data);
       if (validErrorUserInfoReq == null) {
         const pool = getDBConn();
+        data.password = bcrypt.hashSync(data.password, 7);
         pool.getConnection((err, conn) => {
           if (err) {
             res.status(501).json(err);
