@@ -26,16 +26,34 @@ class CheckDataController {
           } else {
             pool.query(getReqFnc(getReqParam), (reqError, records) => {
               const userData = records[0];
+              const sendData = {
+                notExistUser: false,
+                goodAuth: true,
+                userData: {},
+              };
+
               if (reqError != null) {
                 res.status(501).json(reqError);
               } else if (userData) {
+                const userSendData = {};
                 if (userData.password === password) {
-                  res.json({ notExistUser: false, goodAuth: true });
+                  userSendData.firstName = userData.firstName;
+                  userSendData.secondName = userData.secondName;
+                  userSendData.lastName = userData.lastName;
+                  userSendData.birthday = userData.birthday;
+                  userSendData.login = userData.login;
+                  userSendData.email = userData.email;
+                  sendData.userData = userSendData;
+
+                  res.json(sendData);
                 } else {
-                  res.json({ notExistUser: false, goodAuth: false });
+                  sendData.goodAuth = false;
+                  res.json(sendData);
                 }
               } else {
-                res.json({ notExistUser: true, goodAuth: false });
+                sendData.notExistUser = true;
+                sendData.goodAuth = false;
+                res.json(sendData);
               }
             });
           }
