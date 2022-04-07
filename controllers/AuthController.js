@@ -19,11 +19,12 @@ class CheckDataController {
       } else {
         const pool = getDBConn();
         const getReqFnc = email ? getUserByEmailRequest : getUserByLoginRequest;
+        const getReqParam = email || login;
         pool.getConnection((err, conn) => {
           if (err) {
             res.status(501).json(err);
           } else {
-            pool.query(getReqFnc(email), (reqError, records) => {
+            pool.query(getReqFnc(getReqParam), (reqError, records) => {
               const userData = records[0];
               if (reqError != null) {
                 res.status(501).json(reqError);
