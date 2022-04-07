@@ -7,9 +7,10 @@ import {
   getUserByEmailRequest,
   getUserByLoginRequest,
 } from "../dbCreateRequests/UserInfoRequests.js";
+import bcrypt from "bcryptjs";
 
-class CheckDataController {
-  async checkUser(req, res) {
+class AuthController {
+  async authUser(req, res) {
     try {
       const { email, login, password } = req.body;
       if (!email && !login) {
@@ -36,7 +37,11 @@ class CheckDataController {
                 res.status(501).json(reqError);
               } else if (userData) {
                 const userSendData = {};
-                if (userData.password === password) {
+                const isValidPassword = bcrypt.compareSync(
+                  password,
+                  userData.password
+                );
+                if (isValidPassword) {
                   userSendData.firstName = userData.firstName;
                   userSendData.secondName = userData.secondName;
                   userSendData.lastName = userData.lastName;
@@ -44,7 +49,6 @@ class CheckDataController {
                   userSendData.login = userData.login;
                   userSendData.email = userData.email;
                   sendData.userData = userSendData;
-
                   res.json(sendData);
                 } else {
                   sendData.goodAuth = false;
@@ -65,4 +69,4 @@ class CheckDataController {
   }
 }
 
-export default CheckDataController;
+export default AuthController;
