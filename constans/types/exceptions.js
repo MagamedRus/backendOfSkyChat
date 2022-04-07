@@ -1,6 +1,6 @@
 export const NOT_FOUND_ID_EXCEPTION = "param 'id' is not found";
 export const NOT_FOUND_EMAIL_EXCEPTION = "param 'email' is not found";
-export const NOT_FOUND_FIRST_PARAM_EXCEPTION = "param 'email' is not found";
+export const NOT_FOUND_FIRST_PARAM_EXCEPTION = "param 'email' or 'login' is not found";
 export const NOT_FOUND_LOGIN_EXCEPTION = "param 'login' is not found";
 export const NOT_FOUND_PASSWORD_EXCEPTION = "param 'password' is not found";
 export const INCORRECT_EMAIL = "param 'email' is incorrect";
