@@ -68,46 +68,6 @@ class CheckDataController {
       res.status(500).json(e);
     }
   }
-  async authUser(req, res) {
-    let result = {
-      success: false,
-      incorrectPassword: false,
-      userIsNotExist: false,
-    };
-    try {
-      const { login, password } = req.body;
-      if (!login || !password) {
-        !login && res.status(400).json({ message: NOT_FOUND_LOGIN_EXCEPTION });
-        !password &&
-          res.status(400).json({ message: NOT_FOUND_PASSWORD_EXCEPTION });
-      } else {
-        const pool = getDBConn();
-        pool.getConnection((err, conn) => {
-          if (err) {
-            res.status(501).json(err);
-          }
-          pool.query(getUserByLoginRequest(login), (reqError, records) => {
-            if (reqError != null) {
-              res.status(501).json(reqError);
-            }
-            if (!records[0]) {
-              result.userIsNotExist = true;
-              res.json(result);
-            }
-            if (records[0].password === password) {
-              result.success = true;
-              res.json(result);
-            } else {
-              result.incorrectPassword = true;
-              res.json(result);
-            }
-          });
-        });
-      }
-    } catch (e) {
-      res.status(500).json(e);
-    }
-  }
 }
 
 export default CheckDataController;
