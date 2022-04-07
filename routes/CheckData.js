@@ -17,8 +17,4 @@ routerCheckData.post(ROUTE_CHECK + ROUTE_USER_LOGIN, (req, res) =>
   userController.checkUserByLogin(req, res)
 );
 
-routerCheckData.post(ROUTE_CHECK + ROUTE_USER_AUTH, (req, res) =>
-  userController.authUser(req, res)
-);
-
 export default routerCheckData;
