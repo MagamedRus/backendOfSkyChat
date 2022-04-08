@@ -5,3 +5,4 @@ export const MYSQL_CONFIG = {
   database: process.env.DB_NAME || "open_chat",
   password: process.env.DB_PASSWORD || "root",
 };
+export const jwtSecretKey = process.env.JWT_KEY || "9690121469";

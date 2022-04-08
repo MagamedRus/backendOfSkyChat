@@ -3,7 +3,6 @@ import {
   ROUTE_CHECK,
   ROUTE_USER_EMAIL,
   ROUTE_USER_LOGIN,
-  ROUTE_USER_AUTH,
 } from "../constans/routes.js";
 import CheckDataController from "../controllers/CheckDataController.js";
 

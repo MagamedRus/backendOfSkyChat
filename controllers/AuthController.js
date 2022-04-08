@@ -8,6 +8,7 @@ import {
   getUserByLoginRequest,
 } from "../dbCreateRequests/UserInfoRequests.js";
 import bcrypt from "bcryptjs";
+import generateAccessToken from "../common/jwt.js";
 
 class AuthController {
   async authUser(req, res) {
@@ -31,6 +32,7 @@ class AuthController {
                 notExistUser: false,
                 goodAuth: true,
                 userData: {},
+                token: "",
               };
 
               if (reqError != null) {
