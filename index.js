@@ -6,24 +6,29 @@ import routerAuth from "./routes/Auth.js";
 import { ROUTE_API } from "./constans/routes.js";
 import cors from "cors";
 import morgan from "morgan";
+import http from "http";
+import WebSocketController from "./controllers/websocketController.js";
 
 // express config
 const app = express();
+const _cors = cors({
+  origin: "*",
+});
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+app.use(_cors);
 app.use(morgan("dev"));
 app.use(ROUTE_API, routerUserInfo);
 app.use(ROUTE_API, routerCheckData);
 app.use(ROUTE_API, routerAuth);
 
+const server = http.createServer(app);
+
 async function startApp() {
   try {
-    app.listen(PORT, () => console.log("server is working on port", PORT));
+    const webSocketController = new WebSocketController(server);
+    webSocketController.startWebSocketConnection();
+    server.listen(PORT, () => console.log("server is working on port", PORT));
   } catch (e) {
     console.log(e);
   }
