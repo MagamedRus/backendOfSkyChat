@@ -6,6 +6,7 @@ import routerAuth from "./routes/Auth.js";
 import { ROUTE_API } from "./constans/routes.js";
 import cors from "cors";
 import morgan from "morgan";
+import http from "http";
 
 // express config
 const app = express();
@@ -20,6 +21,9 @@ app.use(morgan("dev"));
 app.use(ROUTE_API, routerUserInfo);
 app.use(ROUTE_API, routerCheckData);
 app.use(ROUTE_API, routerAuth);
+
+const server = http.createServer(app);
+// const webSocketServer = new WebSocket.Server({ server });
 
 async function startApp() {
   try {

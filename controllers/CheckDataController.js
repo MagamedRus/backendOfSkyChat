@@ -1,7 +1,6 @@
 import {
   NOT_FOUND_EMAIL_EXCEPTION,
   NOT_FOUND_LOGIN_EXCEPTION,
-  NOT_FOUND_PASSWORD_EXCEPTION,
 } from "../constans/types/exceptions.js";
 import { getDBConn } from "../common/sqlConnection.js";
 import {
