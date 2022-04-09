@@ -14,6 +14,8 @@ export const getOnlyUserHeadersChats = (chatsData, userId) => {
     }
     if (isIncludeUser)
       return {
+        lastChangeDate: el.lastChangeDate,
+        isGeneral: el.isGeneral,
         title: el.title,
         lastMessage,
       };
