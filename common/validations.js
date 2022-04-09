@@ -27,6 +27,12 @@ export const isString = (variable) => {
   return true;
 };
 
+export const isEmptyString = (variable) => {
+  const trimmedVariable = isString(variable) ? variable.trim() : "";
+  if (!trimmedVariable) return true;
+  return false;
+};
+
 export const isValidEMail = (email) => {
   if (!isString(email)) {
     return false;
