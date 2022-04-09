@@ -5,3 +5,5 @@ export const getMonthsLengthList = (year) => {
 
   return [31, febrary, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 };
+
+export const getDateInMilliseconds = () => new Date().getTime();
