@@ -3,6 +3,7 @@ import { PORT } from "./constans/config.js";
 import routerUserInfo from "./routes/UserInfo.js";
 import routerCheckData from "./routes/CheckData.js";
 import routerAuth from "./routes/Auth.js";
+import routerChat from "./routes/Chats.js";
 import { ROUTE_API } from "./constans/routes.js";
 import cors from "cors";
 import morgan from "morgan";
@@ -21,6 +22,7 @@ app.use(morgan("dev"));
 app.use(ROUTE_API, routerUserInfo);
 app.use(ROUTE_API, routerCheckData);
 app.use(ROUTE_API, routerAuth);
+app.use(ROUTE_API, routerChat);
 
 const server = http.createServer(app);
 
