@@ -1,5 +1,13 @@
 import { chatTableScheme } from "../constans/db/dbTableSchemes.js";
-import { INSERT, INTO, NULL, VALUES } from "../constans/db/dbRequestElements.js";
+import {
+  SELECT,
+  ALL,
+  FROM,
+  INSERT,
+  INTO,
+  NULL,
+  VALUES,
+} from "../constans/db/dbRequestElements.js";
 import { CHATS_DATA } from "../constans/db/dbTableNames.js";
 
 export const createNewChatRequest = (data) => {
@@ -13,3 +21,6 @@ export const createNewChatRequest = (data) => {
 
   return `${leftPartReq} ${VALUES} (${reqBody})`;
 };
+
+export const getAllChatsDataRequest = () =>
+  `${SELECT} ${ALL} ${FROM} ${CHATS_DATA}`;
