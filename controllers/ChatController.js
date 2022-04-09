@@ -20,6 +20,7 @@ class ChatController {
           ...req.body,
           chatData: [],
           createDate: getDateInMilliseconds(),
+          lastChangeDate: getDateInMilliseconds(),
         };
         pool.getConnection((err, conn) => {
           if (err) {

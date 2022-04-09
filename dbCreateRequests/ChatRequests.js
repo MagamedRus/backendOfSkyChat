@@ -11,13 +11,20 @@ import {
 import { CHATS_DATA } from "../constans/db/dbTableNames.js";
 
 export const createNewChatRequest = (data) => {
-  const { title, usersId, adminsId, createDate, chatData } = data;
+  const {
+    title,
+    usersId,
+    adminsId,
+    createDate,
+    chatData,
+    isGeneral,
+    lastChangeDate,
+  } = data;
 
   //first part
   const leftPartReq = `${INSERT} ${INTO} ${"`"}${CHATS_DATA}${"`"} ${chatTableScheme}`;
-
-  //req body
-  const reqBody = `${NULL}, '${adminsId}', '${title}', '${usersId}', '${chatData}', '${createDate}'`;
+  const uniquePart = `${NULL}, '${adminsId}', '${title}', '${usersId}', '${chatData}'`;
+  const reqBody = `${uniquePart}, '${createDate}', ${isGeneral}, '${lastChangeDate}'`;
 
   return `${leftPartReq} ${VALUES} (${reqBody})`;
 };

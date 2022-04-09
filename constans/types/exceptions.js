@@ -19,3 +19,4 @@ export const ADMINS_IDS_MUST_BE_ARRAY = "param 'adminsId' must be Array";
 export const EMPTY_ADMINS_IDS = "param 'adminsId' can't be empty";
 export const USER_IDS_MUST_BE_ARRAY = "param 'usersId' must be Array";
 export const EMPTY_USER_IDS = "param 'usersId' can't be empty";
+export const NOT_FOUND_IS_GENERAL_PARAM = "param 'isGeneral' is not found";
