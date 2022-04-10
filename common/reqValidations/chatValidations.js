@@ -6,6 +6,9 @@ import {
   USER_IDS_MUST_BE_ARRAY,
   EMPTY_USER_IDS,
   NOT_FOUND_IS_GENERAL_PARAM,
+  EMPTY_USER_ID,
+  NOT_FOUND_IS_MESSAGE_TEXT_PARAM,
+  EMPTY_CHAT_ID,
 } from "../../constans/types/exceptions.js";
 
 export const validNewChatReq = (chatObj) => {
@@ -34,4 +37,18 @@ export const isIncludeUser = (chatData, userId) => {
   const userIdIndex = usersIdArr.findIndex((el) => el === stringedUserId);
   const isInclude = userIdIndex !== -1;
   return isInclude;
+};
+
+export const validMessageChatReq = (messageObj) => {
+  let errorType = null;
+  if (messageObj.userId === undefined) {
+    errorType = EMPTY_USER_ID;
+  } else if (messageObj.messageText === undefined) {
+    errorType = NOT_FOUND_IS_MESSAGE_TEXT_PARAM;
+  } else if (isEmptyString(messageObj.messageText)) {
+    errorType = EMPTY_MESSAGE_TEXT;
+  } else if (!messageObj.chatId) {
+    errorType = EMPTY_CHAT_ID;
+  }
+  return errorType;
 };
