@@ -26,3 +26,12 @@ export const validNewChatReq = (chatObj) => {
   }
   return errorType;
 };
+
+export const isIncludeUser = (chatData, userId) => {
+  const { usersId } = chatData;
+  const usersIdArr = usersId.split(",");
+  const stringedUserId = String(userId);
+  const userIdIndex = usersIdArr.findIndex((el) => el === stringedUserId);
+  const isInclude = userIdIndex !== -1;
+  return isInclude;
+};
