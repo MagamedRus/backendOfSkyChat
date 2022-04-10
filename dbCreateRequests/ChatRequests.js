@@ -8,6 +8,8 @@ import {
   INTO,
   NULL,
   VALUES,
+  UPDATE,
+  SET,
 } from "../constans/db/dbRequestElements.js";
 import { CHATS_DATA } from "../constans/db/dbTableNames.js";
 
@@ -35,3 +37,10 @@ export const getAllChatsDataRequest = () =>
 
 export const getChatDataById = (chatId) =>
   `${SELECT} ${ALL} ${FROM} ${CHATS_DATA} ${WHERE} ${"`id`"}=${chatId}`;
+
+export const updateMessageData = (messageData, chatId) => {
+  const leftPartReq = `${UPDATE} ${"`"}${CHATS_DATA}${"`"} ${SET}`;
+  const bodyReq = `${"`chatHistory`"} = '${messageData}' `;
+  const clarificationPartReq = `${WHERE} ${"`"}${CHATS_DATA}${"`"}.${"`id`"}=${chatId}`;
+  return `${leftPartReq} ${bodyReq} ${clarificationPartReq}`;
+};
