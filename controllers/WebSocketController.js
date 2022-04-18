@@ -1,29 +1,53 @@
 import { WebSocketServer } from "ws";
+import { isString } from "../common/validations.js";
 
 class WebSocketController {
   constructor(server) {
     this.webSocketServer = new WebSocketServer({ server });
   }
 
-  _dispatchEvent = (message, ws) => {
+  #getObjParamsReq = (url) => {
+    let result = {};
+    let arrParams = [];
+    if (isString(url)) {
+      const clearedURL = url.replace("?", "").replace("/", "");
+      arrParams = clearedURL.split("&");
+    }
+    for (let i = 0; i < arrParams.length; i++) {
+      const arrParam = arrParams[i].split("=");
+      if (arrParam.length === 2) {
+        const paramKey = arrParam[0];
+        const paramValue = arrParam[1];
+        result[paramKey] = paramValue;
+      }
+    }
+    return result;
+  };
+
+  #dispatchEvent = (message, ws) => {
     const json = JSON.parse(message);
     switch (json.event) {
       case "chat-message":
-        console.log(json);
-        this.webSocketServer.clients.forEach((client) =>
-          client.send(JSON.stringify(json))
-        );
+        this.webSocketServer.clients.forEach((client) => {
+          client.send(JSON.stringify(json));
+        });
         break;
       default:
         ws.send(new Error("Wrong query").message);
     }
   };
 
-  startWebSocketConnection = (server) => {
-    this.webSocketServer.on("connection", (ws) => {
-      ws.on("message", (m) => this._dispatchEvent(m, ws));
-      ws.on("error", (e) => ws.send(e));
-      // ws.send("Hi there, I am a WebSocket server");
+  startWebSocketConnection = () => {
+    this.webSocketServer.on("connection", (ws, req) => {
+      const paramsObj = this.#getObjParamsReq(req.url);
+      if (paramsObj.id) {
+        ws.userId = paramsObj.id;
+        ws.on("message", (m) => this.#dispatchEvent(m, ws));
+        ws.on("error", (e) => ws.send(e));
+      } else {
+        ws.send(new Error("Param `id` is not detected").message);
+        ws.close();
+      }
     });
   };
 }
