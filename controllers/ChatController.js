@@ -18,7 +18,6 @@ import {
   NOT_EXIST_CHAT,
 } from "../constans/types/exceptions.js";
 import { getOnlyUserHeadersChats } from "../common/filters.js";
-import { isEmptyString } from "../common/validations.js";
 import {changeMessageData} from '../common/chat.js';
 
 class ChatController {
@@ -139,7 +138,7 @@ class ChatController {
                   res.status(404).json({ message: NOT_EXIST_CHAT });
                 } else {
                   const messageHistory = records[0].chatHistory;
-                  const settedMessageHistory = this.changeMessageData(
+                  const settedMessageHistory = changeMessageData(
                     messageHistory,
                     newMessage
                   );
