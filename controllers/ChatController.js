@@ -19,46 +19,9 @@ import {
 } from "../constans/types/exceptions.js";
 import { getOnlyUserHeadersChats } from "../common/filters.js";
 import { isEmptyString } from "../common/validations.js";
+import {changeMessageData} from '../common/chat.js';
 
 class ChatController {
-  #changeMessageData(messagesData, newMessage) {
-    let messagesList = isEmptyString(messagesData)
-      ? []
-      : JSON.parse(messagesData);
-    let result = new Array(messagesList);
-    if (newMessage.id != undefined) {
-      const existMessageIndex = messagesList.findIndex(
-        (el) => el.id == newMessage.id
-      );
-      const isExist = existMessageIndex !== -1;
-      if (isExist) {
-        const isSameMessage =
-          messagesList[existMessageIndex].messageText ===
-          newMessage.messageText;
-        if (!isSameMessage) {
-          messagesList[existMessageIndex] = {
-            ...messagesList[existMessageIndex],
-            messageText: newMessage.messageText,
-            isReduct: true,
-          };
-        }
-      }
-    } else {
-      const messagesLength = messagesList.length;
-      const newMessageId =
-        messagesLength > 0 ? messagesList[messagesLength - 1].id + 1 : 0;
-      const newMessageObj = {
-        id: newMessageId,
-        userId: newMessage.userId,
-        isReduct: false,
-        messageText: newMessage.messageText,
-        messageDate: getDateInMilliseconds(),
-      };
-      messagesList.push(newMessageObj);
-    }
-    result = JSON.stringify(messagesList);
-    return result;
-  }
   async newChat(req, res) {
     try {
       const validReqBody = validNewChatReq(req.body);
@@ -151,6 +114,7 @@ class ChatController {
     }
   }
 
+  //Todo: make butifull it....
   async updateMessageData(req, res) {
     try {
       const newMessage = req.body;
@@ -175,7 +139,7 @@ class ChatController {
                   res.status(404).json({ message: NOT_EXIST_CHAT });
                 } else {
                   const messageHistory = records[0].chatHistory;
-                  const settedMessageHistory = this.#changeMessageData(
+                  const settedMessageHistory = this.changeMessageData(
                     messageHistory,
                     newMessage
                   );
