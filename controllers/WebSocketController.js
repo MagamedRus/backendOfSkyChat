@@ -40,8 +40,8 @@ class WebSocketController {
   startWebSocketConnection = () => {
     this.webSocketServer.on("connection", (ws, req) => {
       const paramsObj = this.#getObjParamsReq(req.url);
-      if (paramsObj.id) {
-        ws.userId = paramsObj.id;
+      if (paramsObj.userId) {
+        ws.userId = paramsObj.userId;
         ws.on("message", (m) => this.#dispatchEvent(m, ws));
         ws.on("error", (e) => ws.send(e));
       } else {
