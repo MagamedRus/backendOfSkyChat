@@ -9,7 +9,7 @@ export const getOnlyUserHeadersChats = (chatsData, userId) => {
       usersInChatList.findIndex((el) => el === strUserId) !== -1;
 
     if (!isEmptyString(el.chatHistory)) {
-      const messagesList = el.chatHistory.split(",");
+      const messagesList = JSON.parse(el.chatHistory);
       lastMessage = messagesList[messagesList.length - 1];
     }
     if (isIncludeUser)
