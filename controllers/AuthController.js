@@ -42,6 +42,7 @@ class AuthController {
                   userData.password
                 );
                 if (isValidPassword) {
+                  userSendData.id = userData.id;
                   userSendData.firstName = userData.firstName;
                   userSendData.secondName = userData.secondName;
                   userSendData.lastName = userData.lastName;
