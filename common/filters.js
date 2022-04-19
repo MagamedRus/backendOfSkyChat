@@ -12,8 +12,12 @@ export const getOnlyUserHeadersChats = (chatsData, userId) => {
       const messagesList = JSON.parse(el.chatHistory);
       lastMessage = messagesList[messagesList.length - 1];
     }
+
+    console.log(el)
+
     if (isIncludeUser)
       return {
+        id: el.id,
         lastChangeDate: el.lastChangeDate,
         isGeneral: el.isGeneral,
         title: el.title,
