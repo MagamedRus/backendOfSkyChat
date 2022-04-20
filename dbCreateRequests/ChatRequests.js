@@ -35,7 +35,7 @@ export const createNewChatRequest = (data) => {
 export const getAllChatsDataRequest = () =>
   `${SELECT} ${ALL} ${FROM} ${CHATS_DATA}`;
 
-export const getChatDataById = (chatId) =>
+export const getChatDataByIdRequest = (chatId) =>
   `${SELECT} ${ALL} ${FROM} ${CHATS_DATA} ${WHERE} ${"`id`"}=${chatId}`;
 
 export const updateMessageData = (messageData, chatId) => {

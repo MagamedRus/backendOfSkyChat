@@ -7,7 +7,7 @@ import { getDateInMilliseconds } from "../common/date.js";
 import {
   createNewChatRequest,
   getAllChatsDataRequest,
-  getChatDataById,
+  getChatDataByIdRequest,
   updateMessageData,
 } from "../dbCreateRequests/ChatRequests.js";
 import { getDBConn } from "../common/sqlConnection.js";
@@ -96,7 +96,7 @@ class ChatController {
           if (err) {
             res.status(501).json(err);
           } else {
-            pool.query(getChatDataById(chatId), (reqError, records, fields) => {
+            pool.query(getChatDataByIdRequest(chatId), (reqError, records, fields) => {
               if (reqError != null) {
                 res.status(501).json(reqError);
               } else if (!records[0] || !isIncludeUser(records[0], userId)) {
