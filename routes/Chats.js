@@ -15,7 +15,7 @@ routerChat.post(ROUTE_CHAT_HEADERS, (req, res) =>
   chatController.getChatHeadersData(req, res)
 );
 routerChat.post(ROUTE_CHAT_DATA, (req, res) =>
-  chatController.getChatData(req, res)
+  chatController.getChatDataById(req, res)
 );
 routerChat.post(ROUTE_MESSAGE_NEW, (req, res) =>
   chatController.updateMessageData(req, res)

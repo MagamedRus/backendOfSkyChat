@@ -83,7 +83,7 @@ class ChatController {
     }
   }
 
-  async getChatData(req, res) {
+  async getChatDataById(req, res) {
     try {
       const { userId, chatId } = req.body;
       if (!userId) {
