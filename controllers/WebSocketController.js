@@ -3,7 +3,7 @@ import { isString } from "../common/validations.js";
 import { getSyncDBConn } from "../common/sqlConnection.js";
 import {
   getAllChatsDataRequest,
-  getChatDataById,
+  getChatDataByIdRequest,
   updateMessageData,
 } from "../dbCreateRequests/ChatRequests.js";
 import { changeMessageData } from "../common/chat.js";
@@ -37,7 +37,7 @@ class WebSocketController {
     let chatData = {};
     try {
       const conn = await getSyncDBConn();
-      const [chatsData, fields] = await conn.execute(getChatDataById(chatId));
+      const [chatsData, fields] = await conn.execute(getChatDataByIdRequest(chatId));
       chatData = chatsData[0];
     } catch (e) {
       console.log(e);
