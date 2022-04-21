@@ -22,6 +22,7 @@ class UserInfoController {
         title: "SkyChat",
         isGeneral: false,
         usersId: userId,
+        chatData: '',
         createDate: getDateInMilliseconds(),
         lastChangeDate: getDateInMilliseconds(),
         isAdmin: true,
