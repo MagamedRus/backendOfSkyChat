@@ -8,8 +8,33 @@ import {
   getUserByLoginRequest,
 } from "../dbCreateRequests/UserInfoRequests.js";
 import bcrypt from "bcryptjs";
+import { getSyncDBConn } from "../common/sqlConnection.js";
+import { getAllChatsDataRequest } from "../dbCreateRequests/ChatRequests.js";
 
 class AuthController {
+  async #getAdminChatId(userId) {
+    let adminChatId = -1;
+    const strUserId = String(userId);
+    try {
+      const conn = await getSyncDBConn();
+      const [chatsData, fields] = await conn.execute(getAllChatsDataRequest());
+
+      if (Array.isArray(chatsData)) {
+        const onlyAdminChats = chatsData.filter((el) => el.isAdminChat);
+        const userAdminChat = onlyAdminChats.filter((el) => {
+          const usersId = el.usersId.split(",");
+          const userIdIndex = usersId.findIndex((el) => el === strUserId);
+          return userIdIndex !== -1;
+        });
+        if (userAdminChat[0]) adminChatId = userAdminChat[0].id;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    return adminChatId;
+  }
+
   async authUser(req, res) {
     try {
       const { email, login, password } = req.body;
@@ -25,12 +50,13 @@ class AuthController {
           if (err) {
             res.status(501).json(err);
           } else {
-            pool.query(getReqFnc(getReqParam), (reqError, records) => {
+            pool.query(getReqFnc(getReqParam), async (reqError, records) => {
               const userData = records[0];
               const sendData = {
                 notExistUser: false,
                 goodAuth: true,
                 userData: {},
+                adminChatId: -1,
               };
 
               if (reqError != null) {
@@ -42,6 +68,7 @@ class AuthController {
                   userData.password
                 );
                 if (isValidPassword) {
+                  const adminChatId = await this.#getAdminChatId(userData.id);
                   userSendData.id = userData.id;
                   userSendData.firstName = userData.firstName;
                   userSendData.secondName = userData.secondName;
@@ -50,6 +77,7 @@ class AuthController {
                   userSendData.login = userData.login;
                   userSendData.email = userData.email;
                   sendData.userData = userSendData;
+                  sendData.adminChatId = adminChatId;
                   res.json(sendData);
                 } else {
                   sendData.goodAuth = false;
