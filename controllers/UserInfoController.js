@@ -30,7 +30,7 @@ class UserInfoController {
         if (reqError != null) {
           res.status(501).json(reqError);
         } else {
-          res.json({ SkyChatId: records.insertId });
+          res.json({ adminChatId: records.insertId });
         }
       });
     } catch (e) {
