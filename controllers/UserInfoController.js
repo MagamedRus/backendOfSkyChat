@@ -11,8 +11,33 @@ import {
 } from "../dbCreateRequests/UserInfoRequests.js";
 import { validUserInfoPostReq } from "../common/reqValidations/userInfoValidations.js";
 import bcrypt from "bcryptjs";
+import { createNewChatRequest } from "../dbCreateRequests/ChatRequests.js";
+import { getDateInMilliseconds } from "../common/date.js";
 
 class UserInfoController {
+  #createAdminChat(userId, res) {
+    try {
+      const pool = getDBConn();
+      const chatData = {
+        title: "SkyChat",
+        isGeneral: false,
+        usersId: userId,
+        createDate: getDateInMilliseconds(),
+        lastChangeDate: getDateInMilliseconds(),
+        isAdmin: true,
+      };
+      pool.query(createNewChatRequest(chatData), (reqError, records) => {
+        if (reqError != null) {
+          res.status(501).json(reqError);
+        } else {
+          res.json({ SkyChatId: records.insertId });
+        }
+      });
+    } catch (e) {
+      res.status(500).json(e);
+    }
+  }
+
   async create(req, res) {
     const data = req.body;
     try {
@@ -30,7 +55,7 @@ class UserInfoController {
                 if (reqError != null) {
                   res.status(501).json(reqError);
                 } else {
-                  res.send(records);
+                  this.#createAdminChat(records.insertId, res);
                 }
               }
             );

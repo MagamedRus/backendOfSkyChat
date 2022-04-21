@@ -22,12 +22,13 @@ export const createNewChatRequest = (data) => {
     chatData,
     isGeneral,
     lastChangeDate,
+    isAdmin,
   } = data;
 
   //first part
   const leftPartReq = `${INSERT} ${INTO} ${"`"}${CHATS_DATA}${"`"} ${chatTableScheme}`;
   const uniquePart = `${NULL}, '${adminsId}', '${title}', '${usersId}', '${chatData}'`;
-  const reqBody = `${uniquePart}, '${createDate}', ${isGeneral}, '${lastChangeDate}'`;
+  const reqBody = `${uniquePart}, '${createDate}', ${isGeneral}, '${lastChangeDate}', ${isAdmin}`;
 
   return `${leftPartReq} ${VALUES} (${reqBody})`;
 };
