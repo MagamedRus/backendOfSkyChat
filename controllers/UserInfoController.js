@@ -22,7 +22,7 @@ class UserInfoController {
         title: "SkyChat",
         isGeneral: false,
         usersId: userId,
-        chatData: '',
+        chatData: "",
         createDate: getDateInMilliseconds(),
         lastChangeDate: getDateInMilliseconds(),
         isAdmin: true,
@@ -31,7 +31,7 @@ class UserInfoController {
         if (reqError != null) {
           res.status(501).json(reqError);
         } else {
-          res.json({ adminChatId: records.insertId });
+          res.json({ adminChatId: records.insertId, userId: userId });
         }
       });
     } catch (e) {
