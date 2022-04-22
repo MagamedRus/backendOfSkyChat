@@ -10,7 +10,7 @@ import {
   getChatDataByIdRequest,
   updateMessageData,
 } from "../dbCreateRequests/ChatRequests.js";
-import { getDBConn } from "../common/sqlConnection.js";
+import { getDBConn, getSyncDBConn } from "../common/sqlConnection.js";
 import {
   EMPTY_USER_IDS,
   EMPTY_CHAT_ID,
@@ -18,7 +18,8 @@ import {
   NOT_EXIST_CHAT,
 } from "../constans/types/exceptions.js";
 import { getOnlyUserHeadersChats } from "../common/filters.js";
-import {changeMessageData} from '../common/chat.js';
+import { changeMessageData } from "../common/chat.js";
+import { readUserDataRequest } from "../dbCreateRequests/UserInfoRequests.js";
 
 class ChatController {
   async newChat(req, res) {
@@ -83,6 +84,29 @@ class ChatController {
     }
   }
 
+  async #getChatUsersData(chatUsersId) {
+    let usersData = [];
+    const chatUsersIdArr = chatUsersId.split(",");
+    try {
+      const conn = await getSyncDBConn();
+      const [allUsersData, fields] = await conn.execute(readUserDataRequest());
+      console.log(typeof allUsersData);
+      for (let i = 0; i < allUsersData.length; i++) {
+        const userIndex = chatUsersIdArr.findIndex(
+          (el) => el === allUsersData[i].id?.toString()
+        );
+        const isContain = userIndex !== -1;
+        if (isContain) {
+          usersData.push(allUsersData[i]);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    return usersData;
+  }
+
   async getChatDataById(req, res) {
     try {
       const { userId, chatId } = req.body;
@@ -96,15 +120,22 @@ class ChatController {
           if (err) {
             res.status(501).json(err);
           } else {
-            pool.query(getChatDataByIdRequest(chatId), (reqError, records, fields) => {
-              if (reqError != null) {
-                res.status(501).json(reqError);
-              } else if (!records[0] || !isIncludeUser(records[0], userId)) {
-                res.status(404).json({ message: NOT_EXIST_CHAT });
-              } else {
-                res.json(records[0]);
+            pool.query(
+              getChatDataByIdRequest(chatId),
+              async (reqError, records, fields) => {
+                if (reqError != null) {
+                  res.status(501).json(reqError);
+                } else if (!records[0] || !isIncludeUser(records[0], userId)) {
+                  res.status(404).json({ message: NOT_EXIST_CHAT });
+                } else {
+                  const chatData = { ...records[0], usersData: [] };
+                  chatData.usersData = await this.#getChatUsersData(
+                    records[0].usersId
+                  );
+                  res.json(chatData);
+                }
               }
-            });
+            );
           }
         });
       }
