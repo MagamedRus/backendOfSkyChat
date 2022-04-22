@@ -90,7 +90,6 @@ class ChatController {
     try {
       const conn = await getSyncDBConn();
       const [allUsersData, fields] = await conn.execute(readUserDataRequest());
-      console.log(typeof allUsersData);
       for (let i = 0; i < allUsersData.length; i++) {
         const userIndex = chatUsersIdArr.findIndex(
           (el) => el === allUsersData[i].id?.toString()
