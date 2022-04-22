@@ -7,6 +7,8 @@ import {
   updateMessageData,
 } from "../dbCreateRequests/ChatRequests.js";
 import { changeMessageData } from "../common/chat.js";
+import { wsReqTypes } from "../constans/types/websocket.js";
+import { validMessageChatReq } from "../common/reqValidations/chatValidations.js";
 
 class WebSocketController {
   constructor(server) {
@@ -37,7 +39,9 @@ class WebSocketController {
     let chatData = {};
     try {
       const conn = await getSyncDBConn();
-      const [chatsData, fields] = await conn.execute(getChatDataByIdRequest(chatId));
+      const [chatsData, fields] = await conn.execute(
+        getChatDataByIdRequest(chatId)
+      );
       chatData = chatsData[0];
     } catch (e) {
       console.log(e);
@@ -46,16 +50,22 @@ class WebSocketController {
   }
 
   async #addMessageToChatData(message, chatData) {
-    let isSuccess = false;
-    const newMessageData = changeMessageData(chatData.messageHistory, message);
+    const result = {
+      isSuccess: false,
+      newMessageData: {},
+    };
+
+    const newMessagesData = changeMessageData(chatData.chatHistory, message);
+    const newMessagesDataArr = JSON.parse(newMessagesData);
+    result.newMessageData = newMessagesDataArr[newMessagesDataArr.length - 1];
     try {
       const conn = await getSyncDBConn();
-      await conn.execute(updateMessageData(newMessageData, message.chatId));
-      isSuccess = true;
+      await conn.execute(updateMessageData(newMessagesData, message.chatId));
+      result.isSuccess = true;
     } catch (e) {
       console.log(e);
     }
-    return isSuccess;
+    return result;
   }
 
   #getObjParamsReq = (url) => {
@@ -76,15 +86,38 @@ class WebSocketController {
     return result;
   };
 
-  // this.webSocketServer.clients.forEach((client) => {
-  //   client.send(JSON.stringify(json));
-  // });
+  #sendMessage(messageObj, usersId) {
+    this.webSocketServer.clients.forEach((client) => {
+      const isIncludeUser = usersId?.findIndex((el) => el === client.userId);
+      if (isIncludeUser !== -1) client.send(JSON.stringify(messageObj));
+    });
+  }
+
+  #addMessageEvent = async (payload) => {
+    const validMessageErr = validMessageChatReq(payload);
+    if (validMessageErr === null) {
+      const chatData = await this.#getChatById(payload.chatId);
+      if (chatData !== {}) {
+        const { isSuccess, newMessageData } = await this.#addMessageToChatData(
+          payload,
+          chatData
+        );
+        const sendData = {
+          type: wsReqTypes.NEW_CHAT_MESSAGE,
+          payload: newMessageData,
+        };
+        const usersChat = chatData.usersId.split(",");
+        isSuccess && this.#sendMessage(sendData, usersChat);
+      }
+    }
+  };
 
   #dispatchEvent = (message, ws) => {
     const json = JSON.parse(message);
+    const payload = json.payload;
     switch (json.event) {
-      case "chat-message":
-        console.log(message);
+      case wsReqTypes.ADD_CHAT_MESSAGE:
+        this.#addMessageEvent(payload);
         break;
       default:
         ws.send(new Error("Wrong query").message);
@@ -95,6 +128,7 @@ class WebSocketController {
     this.webSocketServer.on("connection", (ws, req) => {
       const paramsObj = this.#getObjParamsReq(req.url);
       if (paramsObj.userId) {
+        ws.userId = paramsObj.userId;
         ws.on("message", (m) => this.#dispatchEvent(m, ws));
         ws.on("error", (e) => ws.send(e));
       } else {
