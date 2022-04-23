@@ -2,7 +2,8 @@ import { isEmptyString } from "./validations.js";
 
 export const getOnlyUserHeadersChats = (chatsData, userId) => {
   const strUserId = String(userId);
-  const result = chatsData.filter((el) => {
+  let result = [];
+  for (let el of chatsData) {
     let lastMessage = {};
     const usersInChatList = el.usersId.split(",");
     const isIncludeUser =
@@ -13,14 +14,14 @@ export const getOnlyUserHeadersChats = (chatsData, userId) => {
       lastMessage = messagesList[messagesList.length - 1];
     }
 
-    if (isIncludeUser)
-      return {
+    isIncludeUser &&
+      result.push({
         id: el.id,
         lastChangeDate: el.lastChangeDate,
         isGeneral: el.isGeneral,
         title: el.title,
         lastMessage,
-      };
-  });
+      });
+  }
   return result;
 };
