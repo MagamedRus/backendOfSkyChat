@@ -9,7 +9,10 @@ import {
 import { changeMessageData } from "../common/chat.js";
 import { wsReqTypes } from "../constans/types/websocket.js";
 import { validMessageChatReq } from "../common/reqValidations/chatValidations.js";
-import { NOT_EXIST_CHAT, NOT_ALLOWED_CHAT } from "../constans/types/exceptions.js";
+import {
+  NOT_EXIST_CHAT,
+  NOT_ALLOWED_CHAT,
+} from "../constans/types/exceptions.js";
 
 class WebSocketController {
   constructor(server) {
@@ -110,22 +113,24 @@ class WebSocketController {
           };
           isSuccess && this.#sendChatMessage(sendData, usersChat);
         } else {
-          client.send({
+          const errMsg = JSON.stringify({
             type: wsReqTypes.ERR,
             payload: {
               code: 403,
               text: NOT_ALLOWED_CHAT,
             },
           });
+          client.send(errMsg);
         }
       } else {
-        client.send({
+        const errMsg = JSON.stringify({
           type: wsReqTypes.ERR,
           payload: {
             code: 404,
             text: NOT_EXIST_CHAT,
           },
         });
+        client.send(errMsg);
       }
     }
   };
