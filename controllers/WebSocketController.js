@@ -86,7 +86,7 @@ class WebSocketController {
     return result;
   };
 
-  #sendMessage(messageObj, usersId) {
+  #sendChatMessage(messageObj, usersId) {
     this.webSocketServer.clients.forEach((client) => {
       const isIncludeUser = usersId?.findIndex((el) => el === client.userId);
       if (isIncludeUser !== -1) client.send(JSON.stringify(messageObj));
@@ -97,7 +97,7 @@ class WebSocketController {
     const validMessageErr = validMessageChatReq(msgData);
     if (validMessageErr === null) {
       const chatData = await this.#getChatById(msgData.chatId);
-      if (chatData !== {}) {
+      if (chatData) {
         const usersChat = chatData.usersId.split(",");
         const userIndex = usersChat.findIndex((el) => el === msgData.userId);
         if (userIndex !== -1) {
@@ -107,8 +107,10 @@ class WebSocketController {
             type: wsReqTypes.NEW_CHAT_MESSAGE,
             payload: newMessageData,
           };
-          isSuccess && this.#sendMessage(sendData, usersChat);
+          isSuccess && this.#sendChatMessage(sendData, usersChat);
         }
+      } else {
+       
       }
     }
   };
