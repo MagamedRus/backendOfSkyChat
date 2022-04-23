@@ -18,7 +18,7 @@ class AuthController {
     try {
       const conn = await getSyncDBConn();
       const [chatsData, fields] = await conn.execute(getAllChatsDataRequest());
-
+      conn.close() 
       if (Array.isArray(chatsData)) {
         const onlyAdminChats = chatsData.filter((el) => el.isAdminChat);
         const userAdminChat = onlyAdminChats.filter((el) => {

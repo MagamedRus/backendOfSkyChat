@@ -5,3 +5,10 @@ export const MYSQL_CONFIG = {
   database: process.env.DB_NAME || "open_chat",
   password: process.env.DB_PASSWORD || "root",
 };
+
+export const SYNC_MYSQL_CONFIG = {
+  ...MYSQL_CONFIG,
+  waitForConnections: true,
+  connectionLimit: 20000,
+  queueLimit: 0,
+};

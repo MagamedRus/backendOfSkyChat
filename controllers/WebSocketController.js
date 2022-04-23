@@ -25,6 +25,7 @@ class WebSocketController {
     try {
       const conn = await getSyncDBConn();
       const [chatsData, fields] = await conn.execute(getAllChatsDataRequest());
+      conn.close();
       for (let i = 0; i < chatsData.length; i++) {
         const arrUsersId = chatsData[i].usersId.split(",");
         chatsUsers.push({
@@ -46,6 +47,7 @@ class WebSocketController {
       const [chatsData, fields] = await conn.execute(
         getChatDataByIdRequest(chatId)
       );
+      conn.close();
       chatData = chatsData[0];
     } catch (e) {
       console.log(e);
@@ -65,6 +67,7 @@ class WebSocketController {
     try {
       const conn = await getSyncDBConn();
       await conn.execute(updateMessageData(newMessagesData, message.chatId));
+      conn.close();
       result.isSuccess = true;
     } catch (e) {
       console.log(e);

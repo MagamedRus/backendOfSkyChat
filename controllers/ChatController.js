@@ -47,10 +47,9 @@ class ChatController {
                 } else {
                   res.json(records);
                 }
-                pool.end()
+                pool.end();
               }
             );
-
           }
         });
       }
@@ -77,7 +76,7 @@ class ChatController {
                 const sendData = getOnlyUserHeadersChats(records, userId);
                 res.json(sendData);
               }
-              pool.end()
+              pool.end();
             });
           }
         });
@@ -93,6 +92,7 @@ class ChatController {
     try {
       const conn = await getSyncDBConn();
       const [allUsersData, fields] = await conn.execute(readUserDataRequest());
+      conn.close();
       for (let i = 0; i < allUsersData.length; i++) {
         const userIndex = chatUsersIdArr.findIndex(
           (el) => el === allUsersData[i].id?.toString()
@@ -136,7 +136,7 @@ class ChatController {
                   );
                   res.json(chatData);
                 }
-                pool.end()
+                pool.end();
               }
             );
           }
@@ -184,7 +184,7 @@ class ChatController {
                       } else {
                         res.json({ isSuccess: true });
                       }
-                      pool.end()
+                      pool.end();
                     }
                   );
                 }
