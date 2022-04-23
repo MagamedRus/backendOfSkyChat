@@ -93,21 +93,22 @@ class WebSocketController {
     });
   }
 
-  #addMessageEvent = async (payload) => {
-    const validMessageErr = validMessageChatReq(payload);
+  #addMessageEvent = async (msgData) => {
+    const validMessageErr = validMessageChatReq(msgData);
     if (validMessageErr === null) {
-      const chatData = await this.#getChatById(payload.chatId);
+      const chatData = await this.#getChatById(msgData.chatId);
       if (chatData !== {}) {
-        const { isSuccess, newMessageData } = await this.#addMessageToChatData(
-          payload,
-          chatData
-        );
-        const sendData = {
-          type: wsReqTypes.NEW_CHAT_MESSAGE,
-          payload: newMessageData,
-        };
         const usersChat = chatData.usersId.split(",");
-        isSuccess && this.#sendMessage(sendData, usersChat);
+        const userIndex = usersChat.findIndex((el) => el === msgData.userId);
+        if (userIndex !== -1) {
+          const { isSuccess, newMessageData } =
+            await this.#addMessageToChatData(msgData, chatData);
+          const sendData = {
+            type: wsReqTypes.NEW_CHAT_MESSAGE,
+            payload: newMessageData,
+          };
+          isSuccess && this.#sendMessage(sendData, usersChat);
+        }
       }
     }
   };
@@ -117,7 +118,8 @@ class WebSocketController {
     const payload = json.payload;
     switch (json.event) {
       case wsReqTypes.ADD_CHAT_MESSAGE:
-        this.#addMessageEvent(payload);
+        const msgData = { ...payload, userId: ws.userId };
+        this.#addMessageEvent(msgData);
         break;
       default:
         ws.send(new Error("Wrong query").message);
