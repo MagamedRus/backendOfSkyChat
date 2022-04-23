@@ -9,6 +9,7 @@ import {
 import { changeMessageData } from "../common/chat.js";
 import { wsReqTypes } from "../constans/types/websocket.js";
 import { validMessageChatReq } from "../common/reqValidations/chatValidations.js";
+import { NOT_EXIST_CHAT, NOT_ALLOWED_CHAT } from "../constans/types/exceptions.js";
 
 class WebSocketController {
   constructor(server) {
@@ -93,7 +94,7 @@ class WebSocketController {
     });
   }
 
-  #addMessageEvent = async (msgData) => {
+  #addMessageEvent = async (msgData, client) => {
     const validMessageErr = validMessageChatReq(msgData);
     if (validMessageErr === null) {
       const chatData = await this.#getChatById(msgData.chatId);
@@ -108,9 +109,23 @@ class WebSocketController {
             payload: newMessageData,
           };
           isSuccess && this.#sendChatMessage(sendData, usersChat);
+        } else {
+          client.send({
+            type: wsReqTypes.ERR,
+            payload: {
+              code: 403,
+              text: NOT_ALLOWED_CHAT,
+            },
+          });
         }
       } else {
-       
+        client.send({
+          type: wsReqTypes.ERR,
+          payload: {
+            code: 404,
+            text: NOT_EXIST_CHAT,
+          },
+        });
       }
     }
   };
@@ -121,7 +136,7 @@ class WebSocketController {
     switch (json.event) {
       case wsReqTypes.ADD_CHAT_MESSAGE:
         const msgData = { ...payload, userId: ws.userId };
-        this.#addMessageEvent(msgData);
+        this.#addMessageEvent(msgData, ws);
         break;
       default:
         ws.send(new Error("Wrong query").message);

@@ -23,5 +23,7 @@ export const EMPTY_USER_ID = "param 'userId' can't be empty";
 export const EMPTY_CHAT_ID = "param 'chatId' can't be empty";
 export const NOT_FOUND_IS_GENERAL_PARAM = "param 'isGeneral' is not found";
 export const NOT_EXIST_CHAT = "current chat is not exist";
-export const NOT_FOUND_IS_MESSAGE_TEXT_PARAM = "param 'messageText' is not found";
+export const NOT_FOUND_IS_MESSAGE_TEXT_PARAM =
+  "param 'messageText' is not found";
 export const EMPTY_MESSAGE_TEXT = "param 'messageText' can't be empty";
+export const NOT_ALLOWED_CHAT = "access is not allow to this chat";
