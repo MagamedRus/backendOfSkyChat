@@ -33,6 +33,7 @@ class UserInfoController {
         } else {
           res.json({ adminChatId: records.insertId, userId: userId });
         }
+        pool.end()
       });
     } catch (e) {
       res.status(500).json(e);
@@ -58,6 +59,7 @@ class UserInfoController {
                 } else {
                   this.#createAdminChat(records.insertId, res);
                 }
+                pool.end()
               }
             );
           }
@@ -82,6 +84,7 @@ class UserInfoController {
           } else res.send(records);
         });
       }
+      pool.end()
     });
   }
 
@@ -101,6 +104,7 @@ class UserInfoController {
                 res.status(501).json(reqError);
               }
               res.send(records[0]);
+              pool.end()
             });
           }
         });
@@ -127,6 +131,7 @@ class UserInfoController {
                 res.status(501).json(reqError);
               }
               res.send(records[0]);
+              pool.end()
             }
           );
         });

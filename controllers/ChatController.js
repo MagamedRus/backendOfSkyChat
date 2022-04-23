@@ -47,8 +47,10 @@ class ChatController {
                 } else {
                   res.json(records);
                 }
+                pool.end()
               }
             );
+
           }
         });
       }
@@ -75,6 +77,7 @@ class ChatController {
                 const sendData = getOnlyUserHeadersChats(records, userId);
                 res.json(sendData);
               }
+              pool.end()
             });
           }
         });
@@ -133,6 +136,7 @@ class ChatController {
                   );
                   res.json(chatData);
                 }
+                pool.end()
               }
             );
           }
@@ -180,6 +184,7 @@ class ChatController {
                       } else {
                         res.json({ isSuccess: true });
                       }
+                      pool.end()
                     }
                   );
                 }

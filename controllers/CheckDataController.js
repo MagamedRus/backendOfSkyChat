@@ -30,6 +30,7 @@ class CheckDataController {
                 } else {
                   res.json({ isExist: false });
                 }
+                pool.end()
               }
             );
           }

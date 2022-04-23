@@ -88,6 +88,7 @@ class AuthController {
                 sendData.goodAuth = false;
                 res.json(sendData);
               }
+              pool.end()
             });
           }
         });

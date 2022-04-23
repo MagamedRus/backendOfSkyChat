@@ -107,7 +107,6 @@ class WebSocketController {
         if (userIndex !== -1) {
           const { isSuccess, newMessageData } =
             await this.#addMessageToChatData(msgData, chatData);
-          console.log(msgData);
           const sendData = {
             type: wsReqTypes.NEW_CHAT_MESSAGE,
             payload: { ...newMessageData, chatId: msgData.chatId },
