@@ -138,7 +138,7 @@ class WebSocketController {
   #dispatchEvent = (message, ws) => {
     const json = JSON.parse(message);
     const payload = json.payload;
-    switch (json.event) {
+    switch (json.type) {
       case wsReqTypes.ADD_CHAT_MESSAGE:
         const msgData = { ...payload, userId: ws.userId };
         this.#addMessageEvent(msgData, ws);
