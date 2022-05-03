@@ -2,9 +2,12 @@ import {
   NOT_FOUND_ID_EXCEPTION,
   NOT_FOUND_EMAIL_EXCEPTION,
 } from "../constans/types/exceptions.js";
-import { getDBConn } from "../common/sqlConnection.js";
+import { getDBConn, getSyncDBConn } from "../common/sqlConnection.js";
 import {
+  createUserSelfDataRequest,
+  createTempDataRequest,
   createUserDataRequest,
+  createNotificationsDataRequest,
   readUserDataRequest,
   getUserByIdRequest,
   getUserByEmailRequest,
@@ -15,9 +18,10 @@ import { createNewChatRequest } from "../dbCreateRequests/ChatRequests.js";
 import { getDateInMilliseconds } from "../common/date.js";
 
 class UserInfoController {
-  #createAdminChat(userId, res) {
+  async #createAdminChat(userId) {
+    let adminChatId = -1;
     try {
-      const pool = getDBConn();
+      const conn = await getSyncDBConn();
       const chatData = {
         title: "SkyChat",
         isGeneral: false,
@@ -27,17 +31,61 @@ class UserInfoController {
         lastChangeDate: getDateInMilliseconds(),
         isAdmin: true,
       };
-      pool.query(createNewChatRequest(chatData), (reqError, records) => {
-        if (reqError != null) {
-          res.status(501).json(reqError);
-        } else {
-          res.json({ adminChatId: records.insertId, userId: userId });
-        }
-        pool.end()
-      });
+      const [records, fields] = await conn.execute(
+        createNewChatRequest(chatData)
+      );
+      conn.close();
+      adminChatId = records.insertId;
     } catch (e) {
-      res.status(500).json(e);
+      console.log(e);
     }
+
+    return adminChatId;
+  }
+
+  async #createTempDatas() {
+    let userOtherDataId = -1;
+    try {
+      const conn = await getSyncDBConn();
+      const [records, fields] = await conn.execute(createTempDataRequest());
+      conn.close();
+      userOtherDataId = records.insertId;
+    } catch (e) {
+      console.log(e);
+    }
+    return userOtherDataId;
+  }
+
+  async #createNotificationsData(userId) {
+    let notificationsDataId = -1;
+    try {
+      const conn = await getSyncDBConn();
+      const [records, fields] = await conn.execute(
+        createNotificationsDataRequest(userId)
+      );
+      conn.close();
+      notificationsDataId = records.insertId;
+    } catch (e) {
+      console.log(e);
+    }
+    return notificationsDataId;
+  }
+
+  async #createUserDatas(userId, tempDataId, notificationsDataId) {
+    let isSuccess = false;
+    try {
+      const conn = await getSyncDBConn();
+      const [records, fields] = await conn.execute(
+        createUserDataRequest(userId, tempDataId, notificationsDataId)
+      );
+      conn.close();
+      if (records.insertId) {
+        isSuccess = true;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    return isSuccess;
   }
 
   async create(req, res) {
@@ -52,14 +100,27 @@ class UserInfoController {
             res.status(501).json(err);
           } else {
             pool.query(
-              createUserDataRequest(data),
-              (reqError, records, fields) => {
+              createUserSelfDataRequest(data),
+              async (reqError, records, fields) => {
                 if (reqError != null) {
                   res.status(501).json(reqError);
                 } else {
-                  this.#createAdminChat(records.insertId, res);
+                  const userId = records.insertId;
+                  const adminChatId = await this.#createAdminChat(userId);
+                  const userTempDataId = await this.#createTempDatas();
+                  const notificationsDataId =
+                    await this.#createNotificationsData(userId);
+                  const isSuccessCreated = await this.#createUserDatas(
+                    userId,
+                    userTempDataId
+                  );
+                  if (isSuccessCreated) {
+                    res.json({ adminChatId, userId, userTempDataId });
+                  } else {
+                    res.status(500).json({ message: "Could'nt remember data" });
+                  }
                 }
-                pool.end()
+                pool.end();
               }
             );
           }
@@ -84,7 +145,7 @@ class UserInfoController {
           } else res.send(records);
         });
       }
-      pool.end()
+      pool.end();
     });
   }
 
@@ -104,7 +165,7 @@ class UserInfoController {
                 res.status(501).json(reqError);
               }
               res.send(records[0]);
-              pool.end()
+              pool.end();
             });
           }
         });
@@ -131,7 +192,7 @@ class UserInfoController {
                 res.status(501).json(reqError);
               }
               res.send(records[0]);
-              pool.end()
+              pool.end();
             }
           );
         });
