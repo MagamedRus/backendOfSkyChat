@@ -1,14 +1,12 @@
 import {
   validNewChatReq,
   isIncludeUser,
-  validMessageChatReq,
 } from "../common/reqValidations/chatValidations.js";
 import { getDateInMilliseconds } from "../common/date.js";
 import {
   createNewChatRequest,
   getAllChatsDataRequest,
   getChatDataByIdRequest,
-  updateMessageData,
 } from "../dbCreateRequests/ChatRequests.js";
 import { getDBConn, getSyncDBConn } from "../common/sqlConnection.js";
 import {
