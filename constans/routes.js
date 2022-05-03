@@ -12,4 +12,3 @@ export const ROUTE_USER_AUTH = "/user/auth";
 export const ROUTE_CHAT_NEW = "/chat/new";
 export const ROUTE_CHAT_HEADERS = "/chat/headers";
 export const ROUTE_CHAT_DATA = "/chat/data";
-export const ROUTE_MESSAGE_NEW = "/message/new";

@@ -3,7 +3,6 @@ import {
   ROUTE_CHAT_NEW,
   ROUTE_CHAT_HEADERS,
   ROUTE_CHAT_DATA,
-  ROUTE_MESSAGE_NEW
 } from "../constans/routes.js";
 import ChatController from "../controllers/ChatController.js";
 
@@ -17,8 +16,4 @@ routerChat.post(ROUTE_CHAT_HEADERS, (req, res) =>
 routerChat.post(ROUTE_CHAT_DATA, (req, res) =>
   chatController.getChatDataById(req, res)
 );
-routerChat.post(ROUTE_MESSAGE_NEW, (req, res) =>
-  chatController.updateMessageData(req, res)
-);
-
 export default routerChat;
