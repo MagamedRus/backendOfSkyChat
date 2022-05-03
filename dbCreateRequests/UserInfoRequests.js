@@ -8,7 +8,7 @@ import {
   FROM,
   WHERE,
 } from "../constans/db/dbRequestElements.js";
-import { USER_DATA } from "../constans/db/dbTableNames.js";
+import { USER_SELF_DATA } from "../constans/db/dbTableNames.js";
 import { userDataTableScheme } from "../constans/db/dbTableSchemes.js";
 //Todo: refactor imports
 
@@ -19,7 +19,7 @@ export const createUserDataRequest = (data) => {
   const { password, birthPlace } = data; //other
 
   //first part
-  const leftPartRequest = `${INSERT} ${INTO} ${"`"}${USER_DATA}${"`"} ${userDataTableScheme}`;
+  const leftPartRequest = `${INSERT} ${INTO} ${"`"}${USER_SELF_DATA}${"`"} ${userDataTableScheme}`;
 
   //request body
   const bodyRequestId = id ? `'${id}'` : NULL;
@@ -31,13 +31,13 @@ export const createUserDataRequest = (data) => {
 };
 
 export const readUserDataRequest = () =>
-  `${SELECT} ${ALL} ${FROM} ${USER_DATA}`;
+  `${SELECT} ${ALL} ${FROM} ${USER_SELF_DATA}`;
 
 export const getUserByIdRequest = (id) =>
-  `${SELECT} ${ALL} ${FROM} ${USER_DATA} ${WHERE} ${"`id`"}=${id}`;
+  `${SELECT} ${ALL} ${FROM} ${USER_SELF_DATA} ${WHERE} ${"`id`"}=${id}`;
 
 export const getUserByEmailRequest = (email) =>
-  `${SELECT} ${ALL} ${FROM} ${USER_DATA} ${WHERE} ${"`email`"}="${email}"`;
+  `${SELECT} ${ALL} ${FROM} ${USER_SELF_DATA} ${WHERE} ${"`email`"}="${email}"`;
 
 export const getUserByLoginRequest = (login) =>
-  `${SELECT} ${ALL} ${FROM} ${USER_DATA} ${WHERE} ${"`login`"}="${login}"`;
+  `${SELECT} ${ALL} ${FROM} ${USER_SELF_DATA} ${WHERE} ${"`login`"}="${login}"`;
