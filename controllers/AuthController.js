@@ -45,12 +45,12 @@ class AuthController {
       } else {
         const pool = getDBConn();
         const getReqFnc = email ? getUserByEmailRequest : getUserByLoginRequest;
-        const getReqParam = email || login;
+        const reqParam = email || login;
         pool.getConnection((err, conn) => {
           if (err) {
             res.status(501).json(err);
           } else {
-            pool.query(getReqFnc(getReqParam), async (reqError, records) => {
+            pool.query(getReqFnc(reqParam), async (reqError, records) => {
               const userData = records[0];
               const sendData = {
                 notExistUser: false,
