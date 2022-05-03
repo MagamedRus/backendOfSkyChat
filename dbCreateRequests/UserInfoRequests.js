@@ -58,7 +58,7 @@ export const createUserDataRequest = (
   notificationsDataId
 ) => {
   const leftPartRequest = `${INSERT} ${INTO} ${"`"}${USER_DATA}${"`"} ${userDataTableScheme}`;
-  return `${leftPartRequest} ${VALUES} (${NULL}, ${userId}, ${tempDataId}, ${notificationsDataId})`;
+  return `${leftPartRequest} ${VALUES} (${NULL}, ${userId}, ${tempDataId}, ${notificationsDataId}, ${NULL})`;
 };
 
 export const createTempDataRequest = () => {

@@ -110,15 +110,12 @@ class UserInfoController {
                   const userTempDataId = await this.#createTempDatas();
                   const notificationsDataId =
                     await this.#createNotificationsData(userId);
-                  const isSuccessCreated = await this.#createUserDatas(
+                  await this.#createUserDatas(
                     userId,
-                    userTempDataId
+                    userTempDataId,
+                    notificationsDataId
                   );
-                  if (isSuccessCreated) {
-                    res.json({ adminChatId, userId, userTempDataId });
-                  } else {
-                    res.status(500).json({ message: "Could'nt remember data" });
-                  }
+                  res.json({ adminChatId, userId });
                 }
                 pool.end();
               }
