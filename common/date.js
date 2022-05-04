@@ -7,3 +7,13 @@ export const getMonthsLengthList = (year) => {
 };
 
 export const getDateInMilliseconds = () => new Date().getTime();
+
+/** Convert string date with format dd.mm.yyyy to milliseconds
+ * @param {string} date - 'dd.mm.yyyy'
+ * @returns {number} milliseconds
+ */
+export function convertStringDateToArr(date) {
+  const [d, m, y] = date.split(".");
+  const milliseconds = new Date(y, m - 1, d);
+  return milliseconds;
+}
