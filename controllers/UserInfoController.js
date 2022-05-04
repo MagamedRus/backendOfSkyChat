@@ -7,11 +7,11 @@ import {
   createUserSelfDataRequest,
   createTempDataRequest,
   createUserDataRequest,
-  createNotificationsDataRequest,
   readUserDataRequest,
   getUserByIdRequest,
   getUserByEmailRequest,
 } from "../dbCreateRequests/UserInfoRequests.js";
+import {  createNotificationsDataRequest} from '../dbCreateRequests/NotificationsRequest.js'; 
 import { validUserInfoPostReq } from "../common/reqValidations/userInfoValidations.js";
 import bcrypt from "bcryptjs";
 import { createNewChatRequest } from "../dbCreateRequests/ChatRequests.js";

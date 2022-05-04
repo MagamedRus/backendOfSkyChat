@@ -12,13 +12,11 @@ import {
   USER_SELF_DATA,
   USER_TEMP_DATA,
   USER_DATA,
-  USER_NOTIFICATIONS_DATA,
 } from "../constans/db/dbTableNames.js";
 import {
   userSelfDataTableScheme,
   userDataTableScheme,
   tempDataTableScheme,
-  userNotificationsScheme,
 } from "../constans/db/dbTableSchemes.js";
 //Todo: refactor imports
 
@@ -64,11 +62,6 @@ export const createUserDataRequest = (
 export const createTempDataRequest = () => {
   const leftPartRequest = `${INSERT} ${INTO} ${"`"}${USER_TEMP_DATA}${"`"} ${tempDataTableScheme}`;
   return `${leftPartRequest} ${VALUES} (${NULL}, ${NULL}, ${NULL})`;
-};
-
-export const createNotificationsDataRequest = (userId) => {
-  const leftPartRequest = `${INSERT} ${INTO} ${"`"}${USER_NOTIFICATIONS_DATA}${"`"} ${userNotificationsScheme}`;
-  return `${leftPartRequest} ${VALUES} (${NULL}, '${userId}', ${NULL}, ${NULL})`;
 };
 
 export const getUserDataById = (userId) => {
