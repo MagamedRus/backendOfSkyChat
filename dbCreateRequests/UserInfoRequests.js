@@ -8,15 +8,10 @@ import {
   FROM,
   WHERE,
 } from "../constans/db/dbRequestElements.js";
-import {
-  USER_SELF_DATA,
-  USER_TEMP_DATA,
-  USER_DATA,
-} from "../constans/db/dbTableNames.js";
+import { USER_SELF_DATA, USER_DATA } from "../constans/db/dbTableNames.js";
 import {
   userSelfDataTableScheme,
   userDataTableScheme,
-  tempDataTableScheme,
 } from "../constans/db/dbTableSchemes.js";
 //Todo: refactor imports
 
@@ -59,11 +54,6 @@ export const createUserDataRequest = (
   return `${leftPartRequest} ${VALUES} (${NULL}, ${userId}, ${tempDataId}, ${notificationsDataId}, ${NULL})`;
 };
 
-export const createTempDataRequest = () => {
-  const leftPartRequest = `${INSERT} ${INTO} ${"`"}${USER_TEMP_DATA}${"`"} ${tempDataTableScheme}`;
-  return `${leftPartRequest} ${VALUES} (${NULL}, ${NULL}, ${NULL})`;
-};
-
 export const getUserDataById = (userId) => {
-  return `${SELECT} ${ALL} ${FROM} ${USER_DATA} ${WHERE} ${"`selfDataId`"}=${userId}`
-}
+  return `${SELECT} ${ALL} ${FROM} ${USER_DATA} ${WHERE} ${"`selfDataId`"}=${userId}`;
+};
