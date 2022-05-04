@@ -70,3 +70,7 @@ export const createNotificationsDataRequest = (userId) => {
   const leftPartRequest = `${INSERT} ${INTO} ${"`"}${USER_NOTIFICATIONS_DATA}${"`"} ${userNotificationsScheme}`;
   return `${leftPartRequest} ${VALUES} (${NULL}, '${userId}', ${NULL}, ${NULL})`;
 };
+
+export const getUserDataById = (userId) => {
+  return `${SELECT} ${ALL} ${FROM} ${USER_DATA} ${WHERE} ${"`selfDataId`"}=${userId}`
+}
