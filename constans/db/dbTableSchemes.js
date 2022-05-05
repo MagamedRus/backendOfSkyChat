@@ -7,3 +7,7 @@ export const userDataTableScheme =
   "(`id`, `selfDataId`, `tempDataId`, `notificationsDataId`, `userFriendsDataArr`)";
 export const userNotificationsScheme =
   "(`id`, `userId`, `newFriendsList`, `newMessagesList`)";
+export const userFriendsTableScheme =
+  "(`id`, `userId`, `friendId`, `createdTime`, `isAccept`)";
+export const newFriendsNotifications =
+  "(`id`, `userId`, `friendId`, `createdDate`, `isRead`)";

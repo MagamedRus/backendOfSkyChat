@@ -7,8 +7,13 @@ import {
   ALL,
   FROM,
   WHERE,
+  SET,
+  UPDATE,
 } from "../constans/db/dbRequestElements.js";
-import { USER_SELF_DATA, USER_DATA } from "../constans/db/dbTableNames.js";
+import {
+  USER_SELF_DATA,
+  USER_DATA,
+} from "../constans/db/dbTableNames.js";
 import {
   userSelfDataTableScheme,
   userDataTableScheme,
@@ -56,4 +61,9 @@ export const createUserDataRequest = (
 
 export const getUserDataById = (userId) => {
   return `${SELECT} ${ALL} ${FROM} ${USER_DATA} ${WHERE} ${"`selfDataId`"}=${userId}`;
+};
+
+export const setUserFriendIdsDataById = (userId, userFriendDataIds) => {
+  const leftPartRequest = `${UPDATE} ${USER_DATA} ${SET} ${`userFriendsDataArr`}=${userFriendDataIds}`;
+  return `${leftPartRequest} ${WHERE} ${USER_DATA}.${"`selfDataId`"}=${userId}`;
 };
