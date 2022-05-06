@@ -28,8 +28,11 @@ export const getOnlyUserHeadersChats = (chatsData, userId) => {
 };
 
 export const getFilteredUsers = (usersData, filterData) => {
-  let result = usersData;
   const { minAge, maxAge, name, gender, friendIdList } = filterData;
+  let result = usersData.map((el) => {
+    const { email, password, registrationDate, ...userData } = el;
+    return userData;
+  });
 
   if (minAge) {
     const minAgeMilliseconds = convertStringDateToArr(minAge);
