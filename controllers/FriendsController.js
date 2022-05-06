@@ -20,15 +20,16 @@ class FriendsController {
   async getNewFriends(req, res) {
     try {
       let { userId, ...filterData } = req.body;
-      !userId && res.status(400).json({ message: EMPTY_USER_ID });
-      const conn = await getSyncDBConn();
-      const [usersData] = await conn.execute(readUserDataRequest());
-      const [userDataList] = await conn.execute(getUserDataById(userId));
-      conn.close();
-      const userFriendsList = userDataList?.userFriendsDataArr?.split(",");
-      filterData.friendIdList = userFriendsList;
-      const filteredUsers = getFilteredUsers(usersData, filterData);
-      res.json(filteredUsers);
+      if (userId) {
+        const conn = await getSyncDBConn();
+        const [usersData] = await conn.execute(readUserDataRequest());
+        const [userDataList] = await conn.execute(getUserDataById(userId));
+        conn.close();
+        const userFriendsList = userDataList?.userFriendsDataArr?.split(",");
+        filterData.friendIdList = userFriendsList;
+        const filteredUsers = getFilteredUsers(usersData, filterData);
+        res.json(filteredUsers);
+      } else res.status(400).json({ message: EMPTY_USER_ID });
     } catch (e) {
       console.log(e);
       res.status(500).json(e);
