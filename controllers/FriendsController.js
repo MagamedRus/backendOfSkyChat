@@ -18,9 +18,8 @@ import {
 
 class FriendsController {
   async getNewFriends(req, res) {
-    let { userId, ...filterData } = req.body;
-
     try {
+      let { userId, ...filterData } = req.body;
       !userId && res.status(400).json({ message: EMPTY_USER_ID });
       const conn = await getSyncDBConn();
       const [usersData] = await conn.execute(readUserDataRequest());
