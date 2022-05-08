@@ -12,8 +12,18 @@ export const getDateInMilliseconds = () => new Date().getTime();
  * @param {string} date - 'dd.mm.yyyy'
  * @returns {number} milliseconds
  */
-export function convertStringDateToArr(date) {
+export function stringDateToFullDate(date) {
   const [d, m, y] = date.split(".");
   const milliseconds = new Date(y, m - 1, d);
   return milliseconds;
+}
+
+export const getAgeByBirthDate = (birthDate) => {
+  const today = new Date();
+  const m = today.getMonth() - birthDate.getMonth();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
 }
