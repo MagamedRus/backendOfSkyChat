@@ -1,5 +1,5 @@
 import { isEmptyString } from "./validations.js";
-import { convertStringDateToArr } from "./date.js";
+import { getAgeByBirthDate, stringDateToFullDate } from "./date.js";
 
 export const getOnlyUserHeadersChats = (chatsData, userId) => {
   const strUserId = String(userId);
@@ -35,17 +35,17 @@ export const getFilteredUsers = (usersData, filterData) => {
   });
 
   if (minAge) {
-    const minAgeMilliseconds = convertStringDateToArr(minAge);
     result = result.filter((el) => {
-      const elAgeMilliseconds = convertStringDateToArr(el.birthday);
-      return elAgeMilliseconds >= minAgeMilliseconds;
+      const elFullDateAge = stringDateToFullDate(el.birthday);
+      const elAge = getAgeByBirthDate(elFullDateAge);
+      return elAge >= Number(minAge);
     });
   }
   if (maxAge) {
-    const maxAgeMilliseconds = convertStringDateToArr(maxAge);
     result = result.filter((el) => {
-      const elAgeMilliseconds = convertStringDateToArr(el.birthday);
-      return elAgeMilliseconds <= maxAgeMilliseconds;
+      const elFullDateAge = stringDateToFullDate(el.birthday);
+      const elAge = getAgeByBirthDate(elFullDateAge);
+      return elAge <= Number(maxAge);
     });
   }
   if (gender) {
