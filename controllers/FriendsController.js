@@ -27,6 +27,7 @@ class FriendsController {
         conn.close();
         const userFriendsList = userDataList?.userFriendsDataArr?.split(",");
         filterData.friendIdList = userFriendsList;
+        filterData.selfId = userId;
         const filteredUsers = getFilteredUsers(usersData, filterData);
         res.json(filteredUsers);
       } else res.status(400).json({ message: EMPTY_USER_ID });
