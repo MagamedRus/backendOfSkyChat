@@ -28,7 +28,7 @@ export const getOnlyUserHeadersChats = (chatsData, userId) => {
 };
 
 export const getFilteredUsers = (usersData, filterData) => {
-  const { minAge, maxAge, name, gender, friendIdList, login, selfId } =
+  const { minAge, maxAge, name, gender, friendsData, login, selfId } =
     filterData;
   let result = usersData.map((el) => {
     const { email, password, registrationDate, ...userData } = el;
@@ -58,9 +58,9 @@ export const getFilteredUsers = (usersData, filterData) => {
       const friendLogin = el.login;
       if (!friendLogin.includes(login)) return false;
     }
-    if (friendIdList) {
-      for (let friendId of friendIdList) {
-        if (friendId === el.id) return false;
+    if (friendsData) {
+      for (let friendData of friendsData) {
+        if (friendData.friendId === el.id) return false;
       }
     }
 
