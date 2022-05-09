@@ -28,50 +28,44 @@ export const getOnlyUserHeadersChats = (chatsData, userId) => {
 };
 
 export const getFilteredUsers = (usersData, filterData) => {
-  const { minAge, maxAge, name, gender, friendIdList, login } = filterData;
+  const { minAge, maxAge, name, gender, friendIdList, login, selfId } =
+    filterData;
   let result = usersData.map((el) => {
     const { email, password, registrationDate, ...userData } = el;
     return userData;
   });
 
-  if (minAge) {
-    result = result.filter((el) => {
+  result = result.filter((el) => {
+    if (selfId === el.id) return false;
+    if (minAge) {
       const elFullDateAge = stringDateToFullDate(el.birthday);
       const elAge = getAgeByBirthDate(elFullDateAge);
-      return elAge >= Number(minAge);
-    });
-  }
-  if (maxAge) {
-    result = result.filter((el) => {
+      if (elAge <= Number(minAge)) return false;
+    }
+    if (maxAge) {
       const elFullDateAge = stringDateToFullDate(el.birthday);
       const elAge = getAgeByBirthDate(elFullDateAge);
-      return elAge <= Number(maxAge);
-    });
-  }
-  if (gender) {
-    result = result.filter((el) => el.gender === gender);
-  }
-  if (name) {
-    result = result.filter((el) => {
+      if (elAge >= Number(maxAge)) return false;
+    }
+    if (gender && el.gender !== gender) return false;
+
+    if (name) {
       const { firstName, secondName, lastName } = el;
       const fullName = `${firstName} ${secondName} ${lastName ? lastName : ""}`;
-      return fullName.includes(name);
-    });
-  }
-  if (login) {
-    result = result.filter((el) => {
+      if (!fullName.includes(name)) return false;
+    }
+    if (login) {
       const friendLogin = el.login;
-      return friendLogin.includes(login);
-    });
-  }
-  if (friendIdList) {
-    result = result.filter((el) => {
+      if (!friendLogin.includes(login)) return false;
+    }
+    if (friendIdList) {
       for (let friendId of friendIdList) {
         if (friendId === el.id) return false;
-        return true;
       }
-    });
-  }
+    }
+
+    return true;
+  });
 
   return result;
 };
