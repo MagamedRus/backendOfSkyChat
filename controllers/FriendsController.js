@@ -4,7 +4,10 @@ import {
   getUserDataById,
   setUserFriendIdsDataById,
 } from "../dbCreateRequests/UserInfoRequests.js";
-import { addUnacceptedFriendReq } from "../dbCreateRequests/FriendRequests.js";
+import {
+  addUnacceptedFriendReq,
+  getFriendsDataByIdReq,
+} from "../dbCreateRequests/FriendRequests.js";
 import {
   createNewFriendNotifactionsReq,
   setUserNotificationFriendList,
@@ -23,10 +26,9 @@ class FriendsController {
       if (userId) {
         const conn = await getSyncDBConn();
         const [usersData] = await conn.execute(readUserDataRequest());
-        const [userDataList] = await conn.execute(getUserDataById(userId));
         conn.close();
-        const userFriendsList = userDataList[0]?.userFriendsDataArr?.split(",");
-        filterData.friendIdList = userFriendsList;
+        const friendsData = await this.#getUserFriendsData(userId);
+        filterData.friendsData = friendsData;
         filterData.selfId = userId;
         const filteredUsers = getFilteredUsers(usersData, filterData);
         res.json(filteredUsers);
@@ -35,6 +37,24 @@ class FriendsController {
       console.log(e);
       res.status(500).json(e);
     }
+  }
+
+  async #getUserFriendsData(userId) {
+    let result = [];
+    let conn = null;
+    try {
+      conn = await getSyncDBConn();
+      const [userData] = await conn.execute(getUserDataById(userId));
+      const userFriendsDataIds = userData[0]?.userFriendsDataArr?.split(",");
+      for (let i of userFriendsDataIds) {
+        const [friendData] = await conn.execute(getFriendsDataByIdReq(i));
+        result.push(friendData[0]);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    conn && conn.close();
+    return result;
   }
 
   async #setFriendNotificationData(userId, notificationDataId) {
