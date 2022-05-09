@@ -28,7 +28,7 @@ export const getOnlyUserHeadersChats = (chatsData, userId) => {
 };
 
 export const getFilteredUsers = (usersData, filterData) => {
-  const { minAge, maxAge, name, gender, friendIdList } = filterData;
+  const { minAge, maxAge, name, gender, friendIdList, login } = filterData;
   let result = usersData.map((el) => {
     const { email, password, registrationDate, ...userData } = el;
     return userData;
@@ -56,6 +56,12 @@ export const getFilteredUsers = (usersData, filterData) => {
       const { firstName, secondName, lastName } = el;
       const fullName = `${firstName} ${secondName} ${lastName ? lastName : ""}`;
       return fullName.includes(name);
+    });
+  }
+  if (login) {
+    result = result.filter((el) => {
+      const friendLogin = el.login;
+      return friendLogin.includes(login);
     });
   }
   if (friendIdList) {
