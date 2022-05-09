@@ -25,7 +25,7 @@ class FriendsController {
         const [usersData] = await conn.execute(readUserDataRequest());
         const [userDataList] = await conn.execute(getUserDataById(userId));
         conn.close();
-        const userFriendsList = userDataList?.userFriendsDataArr?.split(",");
+        const userFriendsList = userDataList[0]?.userFriendsDataArr?.split(",");
         filterData.friendIdList = userFriendsList;
         filterData.selfId = userId;
         const filteredUsers = getFilteredUsers(usersData, filterData);
@@ -41,21 +41,19 @@ class FriendsController {
     try {
       const conn = await getSyncDBConn();
       const [userData] = await conn.execute(getUserDataById(userId));
-      const userNotificationsId = userData[0].notificationsDataId;
+      const userNotificationsId = userData[0]?.notificationsDataId;
       const [userNotificationsData] = await conn.execute(
         getUserNotificationsDataById(userNotificationsId)
       );
-      const notificationsFriends = userNotificationsData?.newFriendList;
+      const notificationsFriends = userNotificationsData[0]?.newFriendsList;
       const typeNotificationsFriends = typeof notificationsFriends;
-      let newNotificationsFriendsList = [notificationDataId];
       switch (typeNotificationsFriends) {
         case "string":
-          let notificationsFriendsList = notificationsFriends?.split(",");
-          newNotificationsFriendsList.push(notificationsFriendsList);
+          const newNotificationsFriends = `${notificationsFriends},${notificationDataId}`;
           await conn.execute(
             setUserNotificationFriendList(
               userNotificationsId,
-              newNotificationsFriendsList
+              newNotificationsFriends
             )
           );
           break;
@@ -63,7 +61,7 @@ class FriendsController {
           await conn.execute(
             setUserNotificationFriendList(
               userNotificationsId,
-              newNotificationsFriendsList
+              notificationDataId
             )
           );
           break;
@@ -76,6 +74,7 @@ class FriendsController {
     }
   }
 
+  //Fix with multiple friends req
   async #setUserFriendIdsData(userId, userFriendDataId) {
     try {
       const conn = await getSyncDBConn();

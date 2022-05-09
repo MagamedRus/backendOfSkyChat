@@ -39,6 +39,6 @@ export const setUserNotificationFriendList = (
   notificationId,
   newFriendsList
 ) => {
-  const leftPartRequest = `${UPDATE} ${USER_NOTIFICATIONS_DATA} ${SET} ${`newFriendsList`}=${newFriendsList}`;
+  const leftPartRequest = `${UPDATE} ${USER_NOTIFICATIONS_DATA} ${SET} ${`newFriendsList`}='${newFriendsList}'`;
   return `${leftPartRequest} ${WHERE} ${USER_NOTIFICATIONS_DATA}.${"`id`"}=${notificationId}`;
 };
