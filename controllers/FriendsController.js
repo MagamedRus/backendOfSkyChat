@@ -101,7 +101,7 @@ class FriendsController {
   async getFriendsData(req, res) {
     try {
       const { userId } = req.body;
-      !userId && req.status(400).json({ message: EMPTY_USER_ID });
+      !userId && res.status(400).json({ message: EMPTY_USER_ID });
       const friendsData = await this.#getUserFriendsData(userId);
       const friendsIds = friendsData.map((el) =>
         el.isAccept ? el.friendId : -1
