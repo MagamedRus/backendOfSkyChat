@@ -5,6 +5,7 @@ import routerCheckData from "./routes/CheckData.js";
 import routerAuth from "./routes/Auth.js";
 import routerChat from "./routes/Chats.js";
 import routerFriends from "./routes/Friends.js";
+import routerNotifications from "./routes/Notifications.js";
 import { ROUTE_API } from "./constans/routes.js";
 import cors from "cors";
 import morgan from "morgan";
@@ -25,6 +26,7 @@ app.use(ROUTE_API, routerCheckData);
 app.use(ROUTE_API, routerAuth);
 app.use(ROUTE_API, routerChat);
 app.use(ROUTE_API, routerFriends);
+app.use(ROUTE_API, routerNotifications);
 const server = http.createServer(app);
 
 async function startApp() {
