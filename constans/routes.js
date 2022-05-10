@@ -15,4 +15,5 @@ export const ROUTE_CHAT_DATA = "/chat/data";
 export const ROUTE_FRIENDS_DATA = "/friends/new";
 export const ROUTE_FRIENDS_INVITE = "/friends/invite";
 export const ROUTE_FRIENDS_ACCEPT = "/friends/accept";
+export const ROUTE_FRIENDS_ALL = "/friends/all";
 export const ROUTE_NOTIFICATIONS_ALL = "/notifications/all";

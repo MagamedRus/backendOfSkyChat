@@ -3,6 +3,7 @@ import {
   ROUTE_FRIENDS_DATA,
   ROUTE_FRIENDS_INVITE,
   ROUTE_FRIENDS_ACCEPT,
+  ROUTE_FRIENDS_ALL
 } from "../constans/routes.js";
 import FriendsController from "../controllers/FriendsController.js";
 
@@ -19,6 +20,10 @@ routerFriends.post(ROUTE_FRIENDS_INVITE, (req, res) =>
 
 routerFriends.post(ROUTE_FRIENDS_ACCEPT, (req, res) =>
   friendsController.acceptFriend(req, res)
+);
+
+routerFriends.post(ROUTE_FRIENDS_ALL, (req, res) =>
+  friendsController.getFriendsData(req, res)
 );
 
 export default routerFriends;

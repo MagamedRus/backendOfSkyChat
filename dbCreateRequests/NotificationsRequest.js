@@ -53,7 +53,3 @@ export const getFriendNotificationById = (notificationId) => {
 export const deleteFriendNotificationById = (notificationId) =>
   `${DELETE} ${FROM} ${NEW_FRIENDS_NOTIFICATIONS} ${WHERE} ${NEW_FRIENDS_NOTIFICATIONS}.${"`id`"}=${notificationId}`;
 
-export const getUserFriendDataReq = (userId, friendId) => {
-  const leftPartRequest = `${SELECT} ${ALL} ${FROM} ${USER_NOTIFICATIONS_DATA}`;
-  return `${leftPartRequest} ${WHERE} ${"`userId`"}=${userId} ${AND} ${WHERE} ${"`friendsId`"}=${friendId}`;
-};

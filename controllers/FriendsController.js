@@ -3,6 +3,7 @@ import {
   readUserDataRequest,
   getUserDataById,
   setUserFriendIdsDataById,
+  getUserByIdRequest,
 } from "../dbCreateRequests/UserInfoRequests.js";
 import {
   createFriendReq,
@@ -15,7 +16,6 @@ import {
   getUserNotificationsDataById,
   getFriendNotificationById,
   deleteFriendNotificationById,
-  getUserFriendDataReq,
 } from "../dbCreateRequests/NotificationsRequest.js";
 import { getFilteredUsers } from "../common/filters.js";
 import {
@@ -42,6 +42,103 @@ class FriendsController {
       console.log(e);
       res.status(500).json(e);
     }
+  }
+
+  async sendInvite(req, res) {
+    const { userId, friendId } = req.body;
+    try {
+      const conn = await getSyncDBConn();
+      !userId && res.status(400).json({ message: EMPTY_USER_ID });
+      !friendId && res.status(400).json({ message: EMPTY_FRIEND_ID });
+
+      const [newFriendRowData] = await conn.execute(createFriendReq(friendId));
+      const [newNotificationRowData] = await conn.execute(
+        createNewFriendNotifactionsReq(friendId, userId)
+      );
+      conn.close();
+      const friendDataId = newFriendRowData.insertId;
+      const notificationDataId = newNotificationRowData.insertId;
+
+      this.#addFriendNotificationIdData(friendId, notificationDataId);
+      this.#addUserFriendIdData(userId, friendDataId);
+
+      res.json({ message: "it's okay" });
+    } catch (e) {
+      console.log(e);
+      res.status(500).json(e);
+    }
+  }
+
+  async acceptFriend(req, res) {
+    let conn = null;
+    try {
+      const { notificationId } = req.body;
+      conn = await getSyncDBConn();
+
+      if (!notificationId) {
+        res.status(400).json({ message: NOTIFICATION_ID_NOT_EXIST });
+      }
+      const [[friendsNotificationData]] = await conn.execute(
+        getFriendNotificationById(notificationId)
+      );
+      const { userId, friendId } = friendsNotificationData;
+      this.#deleteFriendNotificationIdData(userId, notificationId);
+      conn.execute(deleteFriendNotificationById(notificationId));
+      this.#setUserFriendAccept(userId, friendId, true);
+      const [userFriendData] = await conn.execute(
+        createFriendReq(friendId, true)
+      );
+      const selfFriendId = userFriendData.insertId;
+      this.#addUserFriendIdData(userId, selfFriendId);
+      res.json({ message: "it's okay" });
+    } catch (e) {
+      console.log("acceptFriend", e);
+      res.status(500).json({ e });
+    }
+    conn && conn.close();
+  }
+
+  async getFriendsData(req, res) {
+    try {
+      const { userId } = req.body;
+      !userId && req.status(400).json({ message: EMPTY_USER_ID });
+      const friendsData = await this.#getUserFriendsData(userId);
+      const friendsIds = friendsData.map((el) =>
+        el.isAccept ? el.friendId : -1
+      );
+      const result = await this.#getUserFriendsSelfDataByIds(friendsIds);
+      res.json({ data: result });
+    } catch (e) {
+      console.log(e);
+      res.status(500).json({ error: e });
+    }
+  }
+
+  async #getUserFriendsSelfDataByIds(friendIds) {
+    let result = [];
+    let conn = null;
+
+    try {
+      conn = await getSyncDBConn();
+
+      for (let id of friendIds) {
+        if (id !== -1) {
+          const [[friendFullData]] = await conn.execute(getUserByIdRequest(id));
+          const friendData = {
+            id: friendFullData.id,
+            firstName: friendFullData.firstName,
+            secondName: friendFullData.secondName,
+            birthday: friendFullData.birthday,
+          };
+          result.push(friendData);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    conn && conn.close();
+    return result;
   }
 
   async #getUserFriendsData(userId) {
@@ -192,74 +289,6 @@ class FriendsController {
     }
     conn && conn.close();
   }
-
-  async sendInvite(req, res) {
-    const { userId, friendId } = req.body;
-    try {
-      const conn = await getSyncDBConn();
-      !userId && res.status(400).json({ message: EMPTY_USER_ID });
-      !friendId && res.status(400).json({ message: EMPTY_FRIEND_ID });
-
-      const [newFriendRowData] = await conn.execute(createFriendReq(friendId));
-      const [newNotificationRowData] = await conn.execute(
-        createNewFriendNotifactionsReq(friendId, userId)
-      );
-      conn.close();
-      const friendDataId = newFriendRowData.insertId;
-      const notificationDataId = newNotificationRowData.insertId;
-
-      this.#addFriendNotificationIdData(friendId, notificationDataId);
-      this.#addUserFriendIdData(userId, friendDataId);
-
-      res.json({ message: "it's okay" });
-    } catch (e) {
-      console.log(e);
-      res.status(500).json(e);
-    }
-  }
-
-  async acceptFriend(req, res) {
-    let conn = null;
-    try {
-      const { notificationId } = req.body;
-      conn = await getSyncDBConn();
-
-      if (!notificationId) {
-        res.status(400).json({ message: NOTIFICATION_ID_NOT_EXIST });
-      }
-      const [[friendsNotificationData]] = await conn.execute(
-        getFriendNotificationById(notificationId)
-      );
-      const { userId, friendId } = friendsNotificationData;
-      this.#deleteFriendNotificationIdData(userId, notificationId);
-      conn.execute(deleteFriendNotificationById(notificationId));
-      this.#setUserFriendAccept(userId, friendId, true);
-      const [userFriendData] = await conn.execute(
-        createFriendReq(friendId, true)
-      );
-      const selfFriendId = userFriendData.insertId;
-      this.#addUserFriendIdData(userId, selfFriendId);
-      res.json({ message: "it's okay" });
-    } catch (e) {
-      console.log("acceptFriend", e);
-      res.status(500).json({ e });
-    }
-    conn && conn.close();
-  }
 }
 
 export default FriendsController;
-
-// const friendDataId = friendsNotificationData[0].id;
-// const userId = friendsNotificationData[0].friendId;
-// const friendId = friendsNotificationData[0].userId;
-
-// //a
-// this.#deleteFriendNotificationIdData(userId, notificationId);
-// //b
-// //c
-// conn.execute(setAcceptFriendByIdReq(friendDataId, true));
-// const [userFriendData] = await conn.execute(
-//   createFriendReq(friendId, true)
-// );
-// const selfFriendId = userFriendData.insertId;
