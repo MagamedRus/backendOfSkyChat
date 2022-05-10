@@ -48,21 +48,26 @@ class FriendsController {
     const { userId, friendId } = req.body;
     try {
       const conn = await getSyncDBConn();
-      !userId && res.status(400).json({ message: EMPTY_USER_ID });
-      !friendId && res.status(400).json({ message: EMPTY_FRIEND_ID });
+      if (!userId) {
+        res.status(400).json({ message: EMPTY_USER_ID });
+      } else if (!friendId) {
+        res.status(400).json({ message: EMPTY_FRIEND_ID });
+      } else {
+        const [newFriendRowData] = await conn.execute(
+          createFriendReq(friendId)
+        );
+        const [newNotificationRowData] = await conn.execute(
+          createNewFriendNotifactionsReq(friendId, userId)
+        );
+        conn.close();
+        const friendDataId = newFriendRowData.insertId;
+        const notificationDataId = newNotificationRowData.insertId;
 
-      const [newFriendRowData] = await conn.execute(createFriendReq(friendId));
-      const [newNotificationRowData] = await conn.execute(
-        createNewFriendNotifactionsReq(friendId, userId)
-      );
-      conn.close();
-      const friendDataId = newFriendRowData.insertId;
-      const notificationDataId = newNotificationRowData.insertId;
+        this.#addFriendNotificationIdData(friendId, notificationDataId);
+        this.#addUserFriendIdData(userId, friendDataId);
 
-      this.#addFriendNotificationIdData(friendId, notificationDataId);
-      this.#addUserFriendIdData(userId, friendDataId);
-
-      res.json({ message: "it's okay" });
+        res.json({ message: "it's okay" });
+      }
     } catch (e) {
       console.log(e);
       res.status(500).json(e);
@@ -101,13 +106,16 @@ class FriendsController {
   async getFriendsData(req, res) {
     try {
       const { userId } = req.body;
-      !userId && res.status(400).json({ message: EMPTY_USER_ID });
-      const friendsData = await this.#getUserFriendsData(userId);
-      const friendsIds = friendsData.map((el) =>
-        el.isAccept ? el.friendId : -1
-      );
-      const result = await this.#getUserFriendsSelfDataByIds(friendsIds);
-      res.json({ data: result });
+      if (!userId) {
+        res.status(400).json({ message: EMPTY_USER_ID });
+      } else {
+        const friendsData = await this.#getUserFriendsData(userId);
+        const friendsIds = friendsData.map((el) =>
+          el.isAccept ? el.friendId : -1
+        );
+        const result = await this.#getUserFriendsSelfDataByIds(friendsIds);
+        res.json({ data: result });
+      }
     } catch (e) {
       console.log(e);
       res.status(500).json({ error: e });

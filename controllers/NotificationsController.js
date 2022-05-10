@@ -52,17 +52,19 @@ class NotificationsController {
     try {
       const { userId } = req.body;
       let result = [];
-      !userId && res.status(400).json({ message: EMPTY_USER_ID });
-      conn = await getSyncDBConn();
-      const userNotificationsData = await this.#getUserNotificationDataByUserId(
-        userId
-      );
-      const newFriendsStr = userNotificationsData?.newFriendsList;
-      const newFriendsList = newFriendsStr?.split(",") || [];
-      const newFriendNotifData =
-        await this.#getFriendsNotificationDataListByIds(newFriendsList);
+      if (!userId) {
+        res.status(400).json({ message: EMPTY_USER_ID });
+      } else {
+        conn = await getSyncDBConn();
+        const userNotificationsData =
+          await this.#getUserNotificationDataByUserId(userId);
+        const newFriendsStr = userNotificationsData?.newFriendsList;
+        const newFriendsList = newFriendsStr?.split(",") || [];
+        const newFriendNotifData =
+          await this.#getFriendsNotificationDataListByIds(newFriendsList);
 
-      res.send({ data: newFriendNotifData });
+        res.send({ data: newFriendNotifData });
+      }
     } catch (e) {
       console.log(e);
       res.status(500).json({ error: e });
