@@ -129,7 +129,7 @@ class FriendsController {
         addUnacceptedFriendReq(userId, friendId)
       );
       const [newNotificationRowData] = await conn.execute(
-        createNewFriendNotifactionsReq(friendId, userId)
+        createNewFriendNotifactionsReq(userId, friendId)
       );
       conn.close();
       const friendDataId = newFriendRowData.insertId;
