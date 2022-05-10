@@ -134,6 +134,7 @@ class FriendsController {
           const [[friendFullData]] = await conn.execute(getUserByIdRequest(id));
           const friendData = {
             id: friendFullData.id,
+            login: friendFullData.login,
             firstName: friendFullData.firstName,
             secondName: friendFullData.secondName,
             birthday: friendFullData.birthday,
