@@ -94,23 +94,20 @@ class FriendsController {
     }
   }
 
-  //Fix with multiple friends req
   async #setUserFriendIdsData(userId, userFriendDataId) {
     try {
       const conn = await getSyncDBConn();
       const [userData] = await conn.execute(getUserDataById(userId));
-      const userFriendsData = userData?.userFriendsDataArr;
+      const userFriendsData = userData[0]?.userFriendsDataArr;
       const typeUserFriendsData = typeof userFriendsData;
-      let newUserFriends = [userFriendDataId];
 
       switch (typeUserFriendsData) {
         case "string":
-          const userFriendsList = userFriendsData.split(",");
-          newUserFriends.push(userFriendsList);
-          await conn.execute(setUserFriendIdsDataById(userId, newUserFriends));
+          const newFriendsList = `${userFriendsData},${userFriendDataId}`;
+          await conn.execute(setUserFriendIdsDataById(userId, newFriendsList));
           break;
         default:
-          await conn.execute(setUserFriendIdsDataById(userId, newUserFriends));
+          await conn.execute(setUserFriendIdsDataById(userId, userFriendDataId));
           break;
       }
       conn.close();

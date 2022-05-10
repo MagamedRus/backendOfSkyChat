@@ -64,6 +64,6 @@ export const getUserDataById = (userId) => {
 };
 
 export const setUserFriendIdsDataById = (userId, userFriendDataIds) => {
-  const leftPartRequest = `${UPDATE} ${USER_DATA} ${SET} ${`userFriendsDataArr`}=${userFriendDataIds}`;
+  const leftPartRequest = `${UPDATE} ${USER_DATA} ${SET} ${`userFriendsDataArr`}='${userFriendDataIds}'`;
   return `${leftPartRequest} ${WHERE} ${USER_DATA}.${"`selfDataId`"}=${userId}`;
 };
