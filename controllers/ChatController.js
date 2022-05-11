@@ -15,9 +15,12 @@ import {
   EMPTY_USER_ID,
   NOT_EXIST_CHAT,
 } from "../constans/types/exceptions.js";
-import { getOnlyUserHeadersChats } from "../common/filters.js";
-import { changeMessageData } from "../common/chat.js";
-import { readUserDataRequest } from "../dbCreateRequests/UserInfoRequests.js";
+import { getOnlyUserHeadersChats, getGeneralItems } from "../common/filters.js";
+import {
+  getUserDataById,
+  setUserDataChatsArrByIdReq,
+} from "../dbCreateRequests/UserInfoRequests.js";
+import { NULL } from "../constans/db/dbRequestElements.js";
 
 class ChatController {
   async newChat(req, res) {
@@ -143,6 +146,105 @@ class ChatController {
     } catch (e) {
       res.status(500).json(e);
     }
+  }
+
+  async #getChatsDataByIds(chatIds) {
+    let conn = null;
+    let result = [];
+    try {
+      conn = await getSyncDBConn();
+      for (let chatId of chatIds) {
+        const [[chatData]] = await conn.execute(getChatDataByIdRequest(chatId));
+        result.push(chatData);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    conn && conn.close();
+    return result;
+  }
+
+  async #addChatToUsersData(userIds, chatId) {
+    let conn = null;
+
+    try {
+      conn = await getSyncDBConn();
+
+      for (let userId of userIds) {
+        const [[userData]] = await conn.execute(getUserDataById(userId));
+        const userChatsDataArr = userData?.userChatsDataArr || "";
+        const newChatIds = `${userChatsDataArr},${chatId}`;
+        await conn.execute(setUserDataChatsArrByIdReq(userId, newChatIds));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    conn && conn.close();
+  }
+
+  async #createPrivateChat(userId, friendId) {
+    let conn = null;
+    let chatId = -1;
+    const newChatData = {
+      title: "privateChat",
+      usersId: `${friendId},${userId}`,
+      adminsId: `${friendId},${userId}`,
+      createDate: getDateInMilliseconds(),
+      chatData: NULL,
+      isGeneral: 0,
+      lastChangeDate: getDateInMilliseconds(),
+      isAdmin: 0,
+    };
+
+    try {
+      conn = await getSyncDBConn();
+      const [newChatCreateData] = await conn.execute(
+        createNewChatRequest(newChatData)
+      );
+      chatId = newChatCreateData.insertId;
+    } catch (e) {
+      console.log(e);
+    }
+    conn && conn.close();
+    return chatId;
+  }
+
+  async getPrivateChatId(req, res) {
+    let conn = null;
+
+    try {
+      const { userId, friendId } = req.body;
+      if (!friendId) {
+      } else if (!userId) {
+      } else {
+        let chatId = -1;
+        conn = await getSyncDBConn();
+        const [[userData]] = await conn.execute(getUserDataById(userId));
+        const [[friendData]] = await conn.execute(getUserDataById(friendId));
+        const userChatsDataIds = userData?.userChatsDataArr?.split(",") || [];
+        const friendChatsDataIds =
+          friendData?.userChatsDataArr?.split(",") || [];
+        const generalChatsId = getGeneralItems(
+          userChatsDataIds,
+          friendChatsDataIds
+        );
+        const chatsData = await this.#getChatsDataByIds(generalChatsId);
+        const [privateChatData] = chatsData.filter((el) => el.isGeneral === 0);
+        if (privateChatData) {
+          chatId = privateChatData.id;
+        } else {
+          chatId = await this.#createPrivateChat(userId, friendId);
+          const userIds = [userId, friendId];
+          this.#addChatToUsersData(userIds, chatId);
+        }
+        res.send({ chatId });
+      }
+    } catch (e) {
+      console.log(e);
+      res.status(500).json({ error: e });
+    }
+    conn && conn.close();
   }
 }
 

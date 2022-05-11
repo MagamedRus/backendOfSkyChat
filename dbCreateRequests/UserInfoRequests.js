@@ -10,10 +10,7 @@ import {
   SET,
   UPDATE,
 } from "../constans/db/dbRequestElements.js";
-import {
-  USER_SELF_DATA,
-  USER_DATA,
-} from "../constans/db/dbTableNames.js";
+import { USER_SELF_DATA, USER_DATA } from "../constans/db/dbTableNames.js";
 import {
   userSelfDataTableScheme,
   userDataTableScheme,
@@ -54,10 +51,12 @@ export const createUserDataRequest = (
   userId,
   tempDataId,
   notificationsDataId,
-  adminChatId,
+  adminChatId
 ) => {
   const leftPartRequest = `${INSERT} ${INTO} ${"`"}${USER_DATA}${"`"} ${userDataTableScheme}`;
-  return `${leftPartRequest} ${VALUES} (${NULL}, ${userId}, ${tempDataId}, ${notificationsDataId}, ${NULL}, ${adminChatId || NULL})`;
+  return `${leftPartRequest} ${VALUES} (${NULL}, ${userId}, ${tempDataId}, ${notificationsDataId}, ${NULL}, ${
+    adminChatId || NULL
+  })`;
 };
 
 export const getUserDataById = (userId) => {
@@ -67,4 +66,9 @@ export const getUserDataById = (userId) => {
 export const setUserFriendIdsDataById = (userId, userFriendDataIds) => {
   const leftPartRequest = `${UPDATE} ${USER_DATA} ${SET} ${`userFriendsDataArr`}='${userFriendDataIds}'`;
   return `${leftPartRequest} ${WHERE} ${USER_DATA}.${"`selfDataId`"}=${userId}`;
+};
+
+export const setUserDataChatsArrByIdReq = (userId, chatsArr) => {
+  const leftPartReq = `${UPDATE} ${USER_DATA} ${SET} ${`userChatsDataArr`}='${chatsArr}'`;
+  return `${leftPartReq} ${WHERE} ${USER_DATA}.${"`selfDataId`"}=${userId}`;
 };
