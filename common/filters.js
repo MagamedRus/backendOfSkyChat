@@ -25,10 +25,7 @@ export const getOnlyUserHeadersChats = (chatsData) => {
 export const getFilteredUsers = (usersData, filterData) => {
   const { minAge, maxAge, name, gender, friendsData, login, selfId } =
     filterData;
-  let result = usersData.map((el) => {
-    const { email, password, registrationDate, ...userData } = el;
-    return userData;
-  });
+  let result = usersData.map((el) => getSaveDataUser(el));
 
   result = result.filter((el) => {
     if (selfId === el.id) return false;
@@ -76,5 +73,11 @@ export const getGeneralItems = (dataOne, dataTwo) => {
       dataTwo[dataIndex] = null;
     }
   }
+  return result;
+};
+
+/** Exclude private data of user */
+export const getSaveDataUser = (userData) => {
+  const { email, password, registrationDate, ...result } = userData;
   return result;
 };
