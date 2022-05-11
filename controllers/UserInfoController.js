@@ -177,7 +177,6 @@ class UserInfoController {
                   const saveUserData = userData
                     ? getSaveDataUser(userData)
                     : {};
-                  console.log(saveUserData);
                   res.json(saveUserData);
                 }
               }
