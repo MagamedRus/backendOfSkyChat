@@ -4,7 +4,7 @@ export const chatTableScheme =
   "(`id`, `adminsId`, `title`, `usersId`, `chatHistory`, `createDate`, `isGeneral`, `lastChangeDate`, `isAdminChat`)";
 export const tempDataTableScheme = "(`id`, `lastActiveTime`, `deviceToken`)";
 export const userDataTableScheme =
-  "(`id`, `selfDataId`, `tempDataId`, `notificationsDataId`, `userFriendsDataArr`)";
+  "(`id`, `selfDataId`, `tempDataId`, `notificationsDataId`, `userFriendsDataArr`, `userChatsDataArr`)";
 export const userNotificationsScheme =
   "(`id`, `userId`, `newFriendsList`, `newMessagesList`)";
 export const userFriendsTableScheme =

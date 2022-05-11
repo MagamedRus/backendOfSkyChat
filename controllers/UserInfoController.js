@@ -71,12 +71,17 @@ class UserInfoController {
     return notificationsDataId;
   }
 
-  async #createUserDatas(userId, tempDataId, notificationsDataId) {
+  async #createUserDatas(userId, tempDataId, notificationsDataId, adminChatId) {
     let isSuccess = false;
     try {
       const conn = await getSyncDBConn();
       const [records, fields] = await conn.execute(
-        createUserDataRequest(userId, tempDataId, notificationsDataId)
+        createUserDataRequest(
+          userId,
+          tempDataId,
+          notificationsDataId,
+          adminChatId
+        )
       );
       conn.close();
       if (records.insertId) {
@@ -113,7 +118,8 @@ class UserInfoController {
                   await this.#createUserDatas(
                     userId,
                     userTempDataId,
-                    notificationsDataId
+                    notificationsDataId,
+                    adminChatId
                   );
                   res.json({ adminChatId, userId });
                 }

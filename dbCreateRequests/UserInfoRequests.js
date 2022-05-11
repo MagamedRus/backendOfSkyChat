@@ -53,10 +53,11 @@ export const getUserByLoginRequest = (login) =>
 export const createUserDataRequest = (
   userId,
   tempDataId,
-  notificationsDataId
+  notificationsDataId,
+  adminChatId,
 ) => {
   const leftPartRequest = `${INSERT} ${INTO} ${"`"}${USER_DATA}${"`"} ${userDataTableScheme}`;
-  return `${leftPartRequest} ${VALUES} (${NULL}, ${userId}, ${tempDataId}, ${notificationsDataId}, ${NULL})`;
+  return `${leftPartRequest} ${VALUES} (${NULL}, ${userId}, ${tempDataId}, ${notificationsDataId}, ${NULL}, ${adminChatId || NULL})`;
 };
 
 export const getUserDataById = (userId) => {
