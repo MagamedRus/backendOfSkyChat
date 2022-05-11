@@ -1,6 +1,8 @@
 import {
   NOT_FOUND_ID_EXCEPTION,
   NOT_FOUND_EMAIL_EXCEPTION,
+  EMPTY_USER_ID,
+  USER_NOT_EXIST,
 } from "../constans/types/exceptions.js";
 import { getDBConn, getSyncDBConn } from "../common/sqlConnection.js";
 import {
@@ -16,6 +18,7 @@ import { validUserInfoPostReq } from "../common/reqValidations/userInfoValidatio
 import bcrypt from "bcryptjs";
 import { createNewChatRequest } from "../dbCreateRequests/ChatRequests.js";
 import { getDateInMilliseconds } from "../common/date.js";
+import { getSaveDataUser } from "../common/filters.js";
 
 class UserInfoController {
   async #createAdminChat(userId) {
@@ -154,20 +157,28 @@ class UserInfoController {
 
   async getById(req, res) {
     try {
-      const { id } = req.body;
-      if (!id) {
-        res.status(400).json({ message: NOT_FOUND_ID_EXCEPTION });
+      const { userId } = req.body;
+      if (!userId) {
+        res.status(400).json({ message: EMPTY_USER_ID });
       } else {
         const pool = getDBConn();
-        pool.getConnection((err, conn) => {
+        pool.getConnection((err) => {
           if (err) {
             res.status(501).json(err);
           } else {
-            pool.query(getUserByIdRequest(id), (reqError, records, fields) => {
+            pool.query(getUserByIdRequest(userId), (reqError, records) => {
               if (reqError != null) {
                 res.status(501).json(reqError);
+              } else {
+                if (!records) {
+                  res.status(400).json({ message: USER_NOT_EXIST });
+                } else {
+                  const userData = records[0];
+                  const saveUserData = getSaveDataUser(userData);
+                  res.json(saveUserData);
+                }
               }
-              res.send(records[0]);
+
               pool.end();
             });
           }
