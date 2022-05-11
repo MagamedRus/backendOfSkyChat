@@ -174,7 +174,10 @@ class UserInfoController {
                   res.status(400).json({ message: USER_NOT_EXIST });
                 } else {
                   const userData = records[0];
-                  const saveUserData = getSaveDataUser(userData);
+                  const saveUserData = userData
+                    ? getSaveDataUser(userData)
+                    : {};
+                  console.log(saveUserData);
                   res.json(saveUserData);
                 }
               }
