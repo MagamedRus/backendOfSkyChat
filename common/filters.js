@@ -1,28 +1,23 @@
 import { isEmptyString } from "./validations.js";
 import { getAgeByBirthDate, stringDateToFullDate } from "./date.js";
 
-export const getOnlyUserHeadersChats = (chatsData, userId) => {
-  const strUserId = String(userId);
+export const getOnlyUserHeadersChats = (chatsData) => {
   let result = [];
-  for (let el of chatsData) {
+  for (let chatData of chatsData) {
     let lastMessage = {};
-    const usersInChatList = el.usersId.split(",");
-    const isIncludeUser =
-      usersInChatList.findIndex((el) => el === strUserId) !== -1;
 
-    if (!isEmptyString(el.chatHistory)) {
-      const messagesList = JSON.parse(el.chatHistory);
+    if (!isEmptyString(chatData.chatHistory)) {
+      const messagesList = JSON.parse(chatData.chatHistory);
       lastMessage = messagesList[messagesList.length - 1];
     }
 
-    isIncludeUser &&
-      result.push({
-        id: el.id,
-        lastChangeDate: el.lastChangeDate,
-        isGeneral: el.isGeneral,
-        title: el.title,
-        lastMessage,
-      });
+    result.push({
+      id: chatData.id,
+      lastChangeDate: chatData.lastChangeDate,
+      isGeneral: chatData.isGeneral,
+      title: chatData.title,
+      lastMessage,
+    });
   }
   return result;
 };

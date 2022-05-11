@@ -61,31 +61,24 @@ class ChatController {
   }
 
   async getChatHeadersData(req, res) {
+    let conn = null;
     try {
       const { userId } = req.body;
       if (!userId) {
         res.status(400).json({ message: EMPTY_USER_IDS });
       } else {
-        const pool = getDBConn();
-        pool.getConnection((err, conn) => {
-          if (err) {
-            res.status(501).json(err);
-          } else {
-            pool.query(getAllChatsDataRequest(), (reqError, records) => {
-              if (reqError != null) {
-                res.status(501).json(reqError);
-              } else {
-                const sendData = getOnlyUserHeadersChats(records, userId);
-                res.json(sendData);
-              }
-              pool.end();
-            });
-          }
-        });
+        conn = await getSyncDBConn();
+        const [[userData]] = await conn.execute(getUserDataById(userId));
+        const chatIds = userData?.userChatsDataArr.split(",") || [];
+        const chatsData = await this.#getChatsDataByIds(chatIds);
+        const sendData = getOnlyUserHeadersChats(chatsData);
+        res.json(sendData);
       }
     } catch (e) {
       res.status(500).json(e);
     }
+
+    conn && conn.close();
   }
 
   async #getChatUsersData(chatUsersId) {
@@ -192,7 +185,7 @@ class ChatController {
       usersId: `${friendId},${userId}`,
       adminsId: `${friendId},${userId}`,
       createDate: getDateInMilliseconds(),
-      chatData: '',
+      chatData: "",
       isGeneral: 0,
       lastChangeDate: getDateInMilliseconds(),
       isAdmin: 0,
@@ -217,9 +210,9 @@ class ChatController {
     try {
       const { userId, friendId } = req.body;
       if (!friendId) {
-        res.status(400).json({message: EMPTY_FRIEND_ID})
+        res.status(400).json({ message: EMPTY_FRIEND_ID });
       } else if (!userId) {
-        res.status(400).json({message: EMPTY_USER_ID})
+        res.status(400).json({ message: EMPTY_USER_ID });
       } else {
         let chatId = -1;
         conn = await getSyncDBConn();
