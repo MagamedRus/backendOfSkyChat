@@ -16,11 +16,12 @@ import {
   NOT_EXIST_CHAT,
   EMPTY_FRIEND_ID,
 } from "../constans/types/exceptions.js";
-import { getOnlyUserHeadersChats, getGeneralItems } from "../common/filters.js";
+import { getOnlyUserHeadersChats, getGeneralItems, getSaveDataUser } from "../common/filters.js";
 import {
   getUserDataById,
   setUserDataChatsArrByIdReq,
   readUserDataRequest,
+  getUserByIdRequest,
 } from "../dbCreateRequests/UserInfoRequests.js";
 
 class ChatController {
@@ -83,24 +84,20 @@ class ChatController {
 
   async #getChatUsersData(chatUsersId) {
     let usersData = [];
+    let conn = null;
     const chatUsersIdArr = chatUsersId.split(",");
     try {
-      const conn = await getSyncDBConn();
-      const [allUsersData, fields] = await conn.execute(readUserDataRequest());
-      conn.close();
-      for (let i = 0; i < allUsersData.length; i++) {
-        const userIndex = chatUsersIdArr.findIndex(
-          (el) => el === allUsersData[i].id?.toString()
-        );
-        const isContain = userIndex !== -1;
-        if (isContain) {
-          usersData.push(allUsersData[i]);
-        }
+      conn = await getSyncDBConn();
+      for (let userId of chatUsersIdArr) {
+        const [[userData]] = await conn.execute(getUserByIdRequest(userId));
+        const userSaveData = getSaveDataUser(userData)
+        usersData.push(userSaveData);
       }
     } catch (e) {
       console.log(e);
     }
 
+    conn && conn.close();
     return usersData;
   }
 
