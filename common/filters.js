@@ -16,6 +16,7 @@ export const getOnlyUserHeadersChats = (chatsData) => {
       lastChangeDate: chatData.lastChangeDate,
       isGeneral: chatData.isGeneral,
       title: chatData.title,
+      usersId: chatData.usersId,
       lastMessage,
     });
   }
