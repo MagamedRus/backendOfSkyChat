@@ -69,3 +69,17 @@ export const getFilteredUsers = (usersData, filterData) => {
 
   return result;
 };
+
+/** Get unique same elements list of two list */
+export const getGeneralItems = (dataOne, dataTwo) => {
+  const result = [];
+
+  for (let data of dataOne) {
+    const dataIndex = dataTwo.indexOf(data);
+    if (dataIndex !== -1) {
+      result.push(data);
+      dataTwo[dataIndex] = null;
+    }
+  }
+  return result;
+};
