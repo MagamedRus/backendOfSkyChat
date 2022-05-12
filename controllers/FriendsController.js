@@ -9,6 +9,7 @@ import {
   createFriendReq,
   getFriendsDataByIdReq,
   setAcceptFriendByIdReq,
+  deleteFriendByIdReq,
 } from "../dbCreateRequests/FriendRequests.js";
 import {
   createNewFriendNotifactionsReq,
@@ -77,7 +78,7 @@ class FriendsController {
   async acceptFriend(req, res) {
     let conn = null;
     try {
-      const { notificationId } = req.body;
+      const { notificationId, isAccept } = req.body;
       conn = await getSyncDBConn();
 
       if (!notificationId) {
@@ -89,12 +90,19 @@ class FriendsController {
       const { userId, friendId } = friendsNotificationData;
       this.#deleteFriendNotificationIdData(userId, notificationId);
       conn.execute(deleteFriendNotificationById(notificationId));
-      this.#setUserFriendAccept(userId, friendId, true);
-      const [userFriendData] = await conn.execute(
-        createFriendReq(friendId, true)
-      );
-      const selfFriendId = userFriendData.insertId;
-      this.#addUserFriendIdData(userId, selfFriendId);
+
+      if (isAccept) {
+        this.#setUserFriendAccept(userId, friendId, true);
+        const [userFriendData] = await conn.execute(
+          createFriendReq(friendId, true)
+        );
+        const selfFriendId = userFriendData.insertId;
+        this.#addUserFriendIdData(userId, selfFriendId);
+      } else {
+        const deletedId = await this.#deleteUserFriend(userId, friendId);
+        this.#deleteUserFriendIdData(friendId, deletedId);
+      }
+
       res.json({ message: "it's okay" });
     } catch (e) {
       console.log("acceptFriend", e);
@@ -268,11 +276,9 @@ class FriendsController {
       conn = await getSyncDBConn();
       const [userData] = await conn.execute(getUserDataById(userId));
       let userFriendsData = userData[0]?.userFriendsDataArr;
-
       if (typeof userFriendsData === "string") {
         userFriendsData = userFriendsData?.replace(userFriendDataId, "");
-        console.log(userFriendsData);
-        conn.execute(setUserFriendIdsDataById(userId, userFriendsData));
+        await conn.execute(setUserFriendIdsDataById(userId, userFriendsData));
       }
     } catch (e) {
       console.log(e);
@@ -280,14 +286,32 @@ class FriendsController {
 
     conn && conn.close();
   }
-
+  async #deleteUserFriend(userId, friendId) {
+    let conn = null;
+    let deletedId = -1;
+    try {
+      conn = await getSyncDBConn();
+      const friendsData = await this.#getUserFriendsData(friendId);
+      for (let friendData of friendsData) {
+        if (friendData.friendId === userId) {
+          const [reqResData] = await conn.execute(
+            deleteFriendByIdReq(friendData.id)
+          );
+          deletedId = friendData.id;
+        }
+      }
+    } catch (e) {
+      console.log("acceptFriend", e);
+    }
+    conn && conn.close();
+    return deletedId;
+  }
   async #setUserFriendAccept(userId, friendId, isAccept) {
     let conn = null;
     try {
       conn = await getSyncDBConn();
 
       const friendsData = await this.#getUserFriendsData(friendId);
-      console.log(friendsData);
       for (let friendData of friendsData) {
         if (friendData.friendId === userId) {
           await conn.execute(setAcceptFriendByIdReq(friendData.id, isAccept));
