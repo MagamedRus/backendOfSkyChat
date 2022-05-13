@@ -227,6 +227,10 @@ class FriendsController {
 
       if (typeof notificationsFriends === "string") {
         notificationsFriends = notificationsFriends?.replace(
+          `,${notificationDataId}`,
+          ""
+        );
+        notificationsFriends = notificationsFriends?.replace(
           notificationDataId,
           ""
         );
@@ -277,6 +281,7 @@ class FriendsController {
       const [userData] = await conn.execute(getUserDataById(userId));
       let userFriendsData = userData[0]?.userFriendsDataArr;
       if (typeof userFriendsData === "string") {
+        userFriendsData = userFriendsData?.replace(`,${userFriendDataId}`, "");
         userFriendsData = userFriendsData?.replace(userFriendDataId, "");
         await conn.execute(setUserFriendIdsDataById(userId, userFriendsData));
       }
@@ -286,6 +291,7 @@ class FriendsController {
 
     conn && conn.close();
   }
+
   async #deleteUserFriend(userId, friendId) {
     let conn = null;
     let deletedId = -1;
@@ -306,6 +312,7 @@ class FriendsController {
     conn && conn.close();
     return deletedId;
   }
+
   async #setUserFriendAccept(userId, friendId, isAccept) {
     let conn = null;
     try {
