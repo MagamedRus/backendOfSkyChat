@@ -21,7 +21,10 @@ export const createUserSelfDataRequest = (data) => {
   const { id, login, email } = data; //unique value`s
   const { firstName, secondName, lastName } = data; //name
   const { registrationDate, birthday } = data; // dates
-  const { password, birthPlace } = data; //other
+  const { password, birthPlace, imageId } = data; //other
+
+  const bPlace = birthPlace ? `'${birthPlace}'` : NULL;
+  const imgId = imageId || NULL;
 
   //first part
   const leftPartRequest = `${INSERT} ${INTO} ${"`"}${USER_SELF_DATA}${"`"} ${userSelfDataTableScheme}`;
@@ -30,7 +33,7 @@ export const createUserSelfDataRequest = (data) => {
   const bodyRequestId = id ? `'${id}'` : NULL;
   const bodyRequestUniques = `${bodyRequestId}, '${login}', '${email}', '${password}',`;
   const bodyRequestName = `'${firstName}', '${secondName}', '${lastName}',`;
-  const bodyRequestDates = `'${registrationDate}', '${birthPlace}', '${birthday}'`;
+  const bodyRequestDates = `'${registrationDate}', ${bPlace}, '${birthday}', '${imgId}'`;
 
   return `${leftPartRequest} ${VALUES} (${bodyRequestUniques} ${bodyRequestName} ${bodyRequestDates})`;
 };

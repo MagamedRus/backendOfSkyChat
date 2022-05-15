@@ -1,5 +1,5 @@
 export const userSelfDataTableScheme =
-  "(`id`, `login`, `email`, `password`, `firstName`, `secondName`, `lastName`, `registrationDate`, `birthPlace`, `birthday`)";
+  "(`id`, `login`, `email`, `password`, `firstName`, `secondName`, `lastName`, `registrationDate`, `birthPlace`, `birthday`, `imageId`)";
 export const chatTableScheme =
   "(`id`, `adminsId`, `title`, `usersId`,`imageId`, `chatHistory`, `createDate`, `isGeneral`, `lastChangeDate`, `isAdminChat`)";
 export const tempDataTableScheme = "(`id`, `lastActiveTime`, `deviceToken`)";
