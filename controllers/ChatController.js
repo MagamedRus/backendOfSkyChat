@@ -25,7 +25,7 @@ import {
   setUserDataChatsArrByIdReq,
   getUserByIdRequest,
 } from "../dbCreateRequests/UserInfoRequests.js";
-import { createImage } from "../dbCreateRequests/FileRequests.js";
+import {createImageReq } from "../dbCreateRequests/FileRequests.js";
 import { NULL } from "../constans/db/dbRequestElements.js";
 
 class ChatController {
@@ -255,7 +255,7 @@ class ChatController {
     let conn = null;
     try {
       conn = await getSyncDBConn();
-      let [insertData] = await conn.execute(createImage(image, smallImage));
+      let [insertData] = await conn.execute(createImageReq(image, smallImage));
       imageId = insertData?.insertId;
     } catch (e) {
       console.log(e);
