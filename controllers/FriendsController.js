@@ -18,7 +18,7 @@ import {
   getFriendNotificationById,
   deleteFriendNotificationById,
 } from "../dbCreateRequests/NotificationsRequest.js";
-import { getFilteredUsers } from "../common/filters.js";
+import { getFilteredUsers, getSaveDataUser } from "../common/filters.js";
 import {
   EMPTY_USER_ID,
   EMPTY_FRIEND_ID,
@@ -140,13 +140,7 @@ class FriendsController {
       for (let id of friendIds) {
         if (id !== -1) {
           const [[friendFullData]] = await conn.execute(getUserByIdRequest(id));
-          const friendData = {
-            id: friendFullData.id,
-            login: friendFullData.login,
-            firstName: friendFullData.firstName,
-            secondName: friendFullData.secondName,
-            birthday: friendFullData.birthday,
-          };
+          const friendData = getSaveDataUser(friendFullData);
           result.push(friendData);
         }
       }

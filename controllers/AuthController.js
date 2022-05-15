@@ -10,6 +10,7 @@ import {
 import bcrypt from "bcryptjs";
 import { getSyncDBConn } from "../common/sqlConnection.js";
 import { getAllChatsDataRequest } from "../dbCreateRequests/ChatRequests.js";
+import { getSaveDataUser } from "../common/filters.js";
 
 class AuthController {
   async #getAdminChatId(userId) {
@@ -18,7 +19,7 @@ class AuthController {
     try {
       const conn = await getSyncDBConn();
       const [chatsData, fields] = await conn.execute(getAllChatsDataRequest());
-      conn.close() 
+      conn.close();
       if (Array.isArray(chatsData)) {
         const onlyAdminChats = chatsData.filter((el) => el.isAdminChat);
         const userAdminChat = onlyAdminChats.filter((el) => {
@@ -62,20 +63,13 @@ class AuthController {
               if (reqError != null) {
                 res.status(501).json(reqError);
               } else if (userData) {
-                const userSendData = {};
                 const isValidPassword = bcrypt.compareSync(
                   password,
                   userData.password
                 );
                 if (isValidPassword) {
+                  const userSendData = getSaveDataUser(userData);
                   const adminChatId = await this.#getAdminChatId(userData.id);
-                  userSendData.id = userData.id;
-                  userSendData.firstName = userData.firstName;
-                  userSendData.secondName = userData.secondName;
-                  userSendData.lastName = userData.lastName;
-                  userSendData.birthday = userData.birthday;
-                  userSendData.login = userData.login;
-                  userSendData.email = userData.email;
                   sendData.userData = userSendData;
                   sendData.adminChatId = adminChatId;
                   res.json(sendData);
@@ -88,7 +82,7 @@ class AuthController {
                 sendData.goodAuth = false;
                 res.json(sendData);
               }
-              pool.end()
+              pool.end();
             });
           }
         });
