@@ -20,16 +20,18 @@ export const createNewChatRequest = (data) => {
     adminsId,
     createDate,
     chatData,
+    imageId,
     isGeneral,
     lastChangeDate,
     isAdmin,
   } = data;
 
-  //first part
+  const imgId = imageId ? `'${imageId}'` : NULL;
   const leftPartReq = `${INSERT} ${INTO} ${"`"}${CHATS_DATA}${"`"} ${chatTableScheme}`;
-  const uniquePart = `${NULL}, '${adminsId}', '${title}', '${usersId}', '${chatData}'`;
+  const uniquePart = `${NULL}, '${adminsId}', '${title}', '${usersId}', ${imgId}, '${chatData}'`;
   const reqBody = `${uniquePart}, '${createDate}', ${isGeneral}, '${lastChangeDate}', ${isAdmin}`;
 
+  console.log(imgId);
   return `${leftPartReq} ${VALUES} (${reqBody})`;
 };
 

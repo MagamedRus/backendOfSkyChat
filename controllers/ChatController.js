@@ -5,7 +5,6 @@ import {
 import { getDateInMilliseconds } from "../common/date.js";
 import {
   createNewChatRequest,
-  getAllChatsDataRequest,
   getChatDataByIdRequest,
 } from "../dbCreateRequests/ChatRequests.js";
 import { getDBConn, getSyncDBConn } from "../common/sqlConnection.js";
@@ -16,13 +15,18 @@ import {
   NOT_EXIST_CHAT,
   EMPTY_FRIEND_ID,
 } from "../constans/types/exceptions.js";
-import { getOnlyUserHeadersChats, getGeneralItems, getSaveDataUser } from "../common/filters.js";
+import {
+  getOnlyUserHeadersChats,
+  getGeneralItems,
+  getSaveDataUser,
+} from "../common/filters.js";
 import {
   getUserDataById,
   setUserDataChatsArrByIdReq,
-  readUserDataRequest,
   getUserByIdRequest,
 } from "../dbCreateRequests/UserInfoRequests.js";
+import { createImage } from "../dbCreateRequests/FileRequests.js";
+import { NULL } from "../constans/db/dbRequestElements.js";
 
 class ChatController {
   async newChat(req, res) {
@@ -32,9 +36,13 @@ class ChatController {
         res.status(400).json({ message: validReqBody });
       } else {
         const pool = getDBConn();
+        const { imgData } = req.body;
+        const imageId = imgData ? await this.#createImage(imgData) : NULL;
         const newChatData = {
           ...req.body,
           chatData: [],
+          imageId: imageId,
+          isAdmin: false,
           createDate: getDateInMilliseconds(),
           lastChangeDate: getDateInMilliseconds(),
         };
@@ -57,6 +65,7 @@ class ChatController {
         });
       }
     } catch (e) {
+      console.log(e)
       res.status(500).json(e);
     }
   }
@@ -90,7 +99,7 @@ class ChatController {
       conn = await getSyncDBConn();
       for (let userId of chatUsersIdArr) {
         const [[userData]] = await conn.execute(getUserByIdRequest(userId));
-        const userSaveData = getSaveDataUser(userData)
+        const userSaveData = getSaveDataUser(userData);
         usersData.push(userSaveData);
       }
     } catch (e) {
@@ -238,6 +247,22 @@ class ChatController {
       res.status(500).json({ error: e });
     }
     conn && conn.close();
+  }
+
+  async #createImage(imgData) {
+    const { image, smallImage } = imgData;
+    let imageId = -1;
+    let conn = null;
+    try {
+      conn = await getSyncDBConn();
+      let [insertData] = await conn.execute(createImage(image, smallImage));
+      imageId = insertData?.insertId;
+    } catch (e) {
+      console.log(e);
+    }
+
+    conn && conn.close();
+    return imageId;
   }
 }
 
