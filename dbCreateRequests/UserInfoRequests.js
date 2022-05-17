@@ -15,7 +15,7 @@ import {
   userSelfDataTableScheme,
   userDataTableScheme,
 } from "../constans/db/dbTableSchemes.js";
-//Todo: refactor imports
+//Todo: refactor importsCON
 
 export const createUserSelfDataRequest = (data) => {
   const { id, login, email } = data; //unique value`s
@@ -36,6 +36,20 @@ export const createUserSelfDataRequest = (data) => {
   const bodyRequestDates = `'${registrationDate}', ${bPlace}, '${birthday}', '${imgId}'`;
 
   return `${leftPartRequest} ${VALUES} (${bodyRequestUniques} ${bodyRequestName} ${bodyRequestDates})`;
+};
+
+export const updateUserDataReq = (data, userId) => {
+  const leftPartReq = `${UPDATE} ${"`"}${USER_SELF_DATA}${"`"} ${SET}`;
+  const password = `${"`password`"} = '${data.password}'`;
+  const firstName = `${"`firstName`"} = '${data.firstName}'`;
+  const secondName = `${"`secondName`"} = '${data.secondName}'`;
+  const lastName = `${"`lastName`"} = '${data.lastName}'`;
+  const birthPlace = `${"`birthPlace`"} = '${data.birthPlace}'`;
+  const imageId = `${"`imageId`"} = '${data.imageId}'`;
+  const bodyReq = `${password}, ${firstName}, ${secondName}, ${lastName}, ${birthPlace}, ${imageId}`;
+  const lastPartReq = `${WHERE} ${"`"}${USER_SELF_DATA}${"`"}.${"`id`"} = ${userId}`;
+
+  return `${leftPartReq} ${bodyReq} ${lastPartReq}`;
 };
 
 export const readUserDataRequest = () =>

@@ -11,6 +11,7 @@ import {
   readUserDataRequest,
   getUserByIdRequest,
   getUserByEmailRequest,
+  updateUserDataReq,
 } from "../dbCreateRequests/UserInfoRequests.js";
 import { createNotificationsDataRequest } from "../dbCreateRequests/NotificationsRequest.js";
 import { createTempDataRequest } from "../dbCreateRequests/TemporaryRequests.js";
@@ -98,6 +99,20 @@ class UserInfoController {
     return isSuccess;
   }
 
+  async #getSyncUserById(userId) {
+    let conn = null;
+    let result = {};
+    try {
+      conn = await getSyncDBConn();
+      const [[userData]] = await conn.execute(getUserByIdRequest(userId));
+      result = userData;
+    } catch (e) {
+      console.log(e);
+    }
+    conn && conn.close();
+    return result;
+  }
+
   async create(req, res) {
     let { imgData, ...data } = req.body;
     try {
@@ -106,7 +121,6 @@ class UserInfoController {
         const pool = getDBConn();
         data.imageId = imgData ? await this.#createImage(imgData) : NULL;
         data.password = bcrypt.hashSync(data.password, 7);
-        console.log(data);
         pool.getConnection((err, conn) => {
           if (err) {
             res.status(501).json(err);
@@ -222,17 +236,36 @@ class UserInfoController {
     }
   }
 
-  async update(req, res) {
+  async updateUserSelfData(req, res) {
+    let conn = null;
     try {
-      const newUserInfo = req.body;
-      // Todo: add more exceptions
-      if (!newUserInfo._id) {
-        res.status(400).json({ message: NOT_FOUND_ID_EXCEPTION });
+      let { userId, password, ...body } = req.body;
+      if (!userId) {
+        res.status(400).json({ message: EMPTY_USER_ID });
+      } else {
+        conn = await getSyncDBConn();
+        const userData = await this.#getSyncUserById(userId);
+        password = password
+          ? bcrypt.hashSync(password, 7)
+          : userData.password;
+        const changedData = {
+          password,
+          firstName: body.firstName || userData.firstName,
+          secondName: body.secondName || userData.secondName,
+          lastName: body.lastName || userData.lastName,
+          birthPlace: body.birthPlace || userData.birthPlace,
+          imageId: body.imageId || userData.imageId,
+        };
+
+        await conn.execute(updateUserDataReq(changedData, userId));
+
+        res.json({ message: "it's okay" });
       }
-      // return res.json();
     } catch (e) {
-      res.status(500).json(e);
+      res.status(500).json({ error: e });
+      console.log(e);
     }
+    conn && conn.close();
   }
 
   async delete(req, res) {
