@@ -20,8 +20,7 @@ import bcrypt from "bcryptjs";
 import { createNewChatRequest } from "../dbCreateRequests/ChatRequests.js";
 import { getDateInMilliseconds } from "../common/date.js";
 import { getSaveDataUser } from "../common/filters.js";
-import { createImageReq } from "../dbCreateRequests/FileRequests.js";
-import { NULL } from "../constans/db/dbRequestElements.js";
+
 
 class UserInfoController {
   async #createAdminChat(userId) {
@@ -114,12 +113,11 @@ class UserInfoController {
   }
 
   async create(req, res) {
-    let { imgData, ...data } = req.body;
+    let data = req.body;
     try {
       const validErrorUserInfoReq = validUserInfoPostReq(data);
       if (validErrorUserInfoReq == null) {
         const pool = getDBConn();
-        data.imageId = imgData ? await this.#createImage(imgData) : NULL;
         data.password = bcrypt.hashSync(data.password, 7);
         pool.getConnection((err, conn) => {
           if (err) {
@@ -245,9 +243,7 @@ class UserInfoController {
       } else {
         conn = await getSyncDBConn();
         const userData = await this.#getSyncUserById(userId);
-        password = password
-          ? bcrypt.hashSync(password, 7)
-          : userData.password;
+        password = password ? bcrypt.hashSync(password, 7) : userData.password;
         const changedData = {
           password,
           firstName: body.firstName || userData.firstName,
@@ -278,22 +274,6 @@ class UserInfoController {
     } catch (e) {
       res.status(500).json(e);
     }
-  }
-
-  async #createImage(imgData) {
-    const { image, smallImage } = imgData;
-    let imageId = -1;
-    let conn = null;
-    try {
-      conn = await getSyncDBConn();
-      let [insertData] = await conn.execute(createImageReq(image, smallImage));
-      imageId = insertData?.insertId;
-    } catch (e) {
-      console.log(e);
-    }
-
-    conn && conn.close();
-    return imageId;
   }
 }
 
