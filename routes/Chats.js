@@ -4,7 +4,7 @@ import {
   ROUTE_CHAT_HEADERS,
   ROUTE_CHAT_DATA,
   ROUTE_PRIVATE_CHAT_ID,
-  ROUTE_CHAT_UPDATE
+  ROUTE_CHAT_UPDATE_IMAGE
 } from "../constans/routes.js";
 import ChatController from "../controllers/ChatController.js";
 
@@ -18,7 +18,7 @@ routerChat.post(ROUTE_CHAT_HEADERS, (req, res) =>
 routerChat.post(ROUTE_CHAT_DATA, (req, res) =>
   chatController.getChatDataById(req, res)
 );
-routerChat.post(ROUTE_CHAT_UPDATE, (req, res) =>
+routerChat.post(ROUTE_CHAT_UPDATE_IMAGE, (req, res) =>
   chatController.updateChatImg(req, res)
 );
 routerChat.post(ROUTE_PRIVATE_CHAT_ID, (req, res) =>
