@@ -11,6 +11,7 @@ import cors from "cors";
 import morgan from "morgan";
 import http from "http";
 import WebSocketController from "./controllers/websocketController.js";
+import routerFiles from "./routes/Files.js";
 
 // express config
 const app = express();
@@ -27,6 +28,8 @@ app.use(ROUTE_API, routerAuth);
 app.use(ROUTE_API, routerChat);
 app.use(ROUTE_API, routerFriends);
 app.use(ROUTE_API, routerNotifications);
+app.use(ROUTE_API, routerFiles)
+
 const server = http.createServer(app);
 
 async function startApp() {
