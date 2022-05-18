@@ -33,21 +33,24 @@ import { NULL } from "../constans/db/dbRequestElements.js";
 class ChatController {
   async newChat(req, res) {
     try {
-      const validReqBody = validNewChatReq(req.body);
+      const body = req.body;
+      const validReqBody = validNewChatReq(body);
       if (validReqBody !== null) {
         res.status(400).json({ message: validReqBody });
       } else {
         const pool = getDBConn();
-        const { imgData } = req.body;
+        const { imgData } = body;
         const imageId = imgData ? await this.#createImage(imgData) : NULL;
+        const usersId = body.usersId;
         const newChatData = {
-          ...req.body,
+          ...body,
           chatData: [],
           imageId: imageId,
           isAdmin: false,
           createDate: getDateInMilliseconds(),
           lastChangeDate: getDateInMilliseconds(),
         };
+
         pool.getConnection((err, conn) => {
           if (err) {
             res.status(501).json(err);
@@ -58,7 +61,9 @@ class ChatController {
                 if (reqError != null) {
                   res.status(501).json(reqError);
                 } else {
-                  res.json(records);
+                  const chatId = records.insertId;
+                  this.#addChatToUsersData(usersId, chatId);
+                  res.json({ chatId });
                 }
                 pool.end();
               }
