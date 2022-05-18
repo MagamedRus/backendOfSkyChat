@@ -6,6 +6,7 @@ import { getDateInMilliseconds } from "../common/date.js";
 import {
   createNewChatRequest,
   getChatDataByIdRequest,
+  updateChatImageIdReq,
 } from "../dbCreateRequests/ChatRequests.js";
 import { getDBConn, getSyncDBConn } from "../common/sqlConnection.js";
 import {
@@ -14,6 +15,7 @@ import {
   EMPTY_USER_ID,
   NOT_EXIST_CHAT,
   EMPTY_FRIEND_ID,
+  EMPTY_IMAGE_ID,
 } from "../constans/types/exceptions.js";
 import {
   getOnlyUserHeadersChats,
@@ -25,7 +27,7 @@ import {
   setUserDataChatsArrByIdReq,
   getUserByIdRequest,
 } from "../dbCreateRequests/UserInfoRequests.js";
-import {createImageReq } from "../dbCreateRequests/FileRequests.js";
+import { createImageReq } from "../dbCreateRequests/FileRequests.js";
 import { NULL } from "../constans/db/dbRequestElements.js";
 
 class ChatController {
@@ -65,7 +67,7 @@ class ChatController {
         });
       }
     } catch (e) {
-      console.log(e)
+      console.log(e);
       res.status(500).json(e);
     }
   }
@@ -83,6 +85,26 @@ class ChatController {
         const chatsData = await this.#getChatsDataByIds(chatIds);
         const sendData = getOnlyUserHeadersChats(chatsData);
         res.json(sendData);
+      }
+    } catch (e) {
+      res.status(500).json(e);
+    }
+
+    conn && conn.close();
+  }
+
+  async updateChatImg(req, res) {
+    let conn = null;
+    try {
+      const { chatId, imageId } = req.body;
+      if (!chatId) {
+        res.status(400).json({ message: EMPTY_CHAT_ID });
+      } else if (!imageId) {
+        res.status(400).json({ message: EMPTY_IMAGE_ID });
+      } else {
+        conn = await getSyncDBConn();
+        await conn.execute(updateChatImageIdReq(chatId, imageId));
+        res.json({ status: "it's okay" });
       }
     } catch (e) {
       res.status(500).json(e);

@@ -13,6 +13,7 @@ export const ROUTE_USER_AUTH = "/user/auth";
 export const ROUTE_CHAT_NEW = "/chat/new";
 export const ROUTE_CHAT_HEADERS = "/chat/headers";
 export const ROUTE_CHAT_DATA = "/chat/data";
+export const ROUTE_CHAT_UPDATE = "/chat/update";
 export const ROUTE_PRIVATE_CHAT_ID = "/chat/privateChatId";
 export const ROUTE_FRIENDS_DATA = "/friends/new";
 export const ROUTE_FRIENDS_INVITE = "/friends/invite";

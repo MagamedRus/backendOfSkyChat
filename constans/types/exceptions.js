@@ -32,3 +32,4 @@ export const USER_NOT_EXIST = "user is not exist ";
 export const FRIEND_NOT_EXIST = "friend is not exist ";
 export const NOTIFICATION_ID_NOT_EXIST =
   "param 'notificationId' can't be empty";
+export const EMPTY_IMAGE_ID = "param 'imageId' can't be empty";

@@ -47,3 +47,9 @@ export const updateMessageData = (messageData, chatId) => {
   const clarificationPartReq = `${WHERE} ${"`"}${CHATS_DATA}${"`"}.${"`id`"}=${chatId}`;
   return `${leftPartReq} ${bodyReq} ${clarificationPartReq}`;
 };
+
+//UPDATE `chats_data` SET `imageId` = '1' WHERE `chats_data`.`id` = 73;
+export const updateChatImageIdReq = (chatId, imageId) => {
+  const leftPartReq = `${UPDATE} ${CHATS_DATA} ${SET} ${"`imageId`"} = '${imageId}'`;
+  return `${leftPartReq} ${WHERE} ${CHATS_DATA}.${"`id`"} = '${chatId}'`;
+};
