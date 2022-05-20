@@ -6,6 +6,8 @@ import {
   DELETE,
   FROM,
   WHERE,
+  SELECT,
+  ALL,
 } from "../constans/db/dbRequestElements.js";
 import { IMAGES } from "../constans/db/dbTableNames.js";
 import { imagesTableScheme } from "../constans/db/dbTableSchemes.js";
@@ -18,8 +20,12 @@ export const createImageReq = (image, smallImage) => {
   return `${leftPartReq} ${VALUES} (${NULL}, ${smallImageParam}, ${imageParam})`;
 };
 
-//"DELETE FROM `images` WHERE `images`.`id` = 17"?
 export const deleteImageByIdReq = (imageId) => {
   const leftPartReq = `${DELETE} ${FROM} ${"`"}${IMAGES}${"`"} ${WHERE}`;
+  return `${leftPartReq} ${"`"}${IMAGES}${"`"}.${"`id`"} = ${imageId}`;
+};
+
+export const getImageByIdReq = (imageId) => {
+  const leftPartReq = `${SELECT} ${ALL} ${FROM} ${"`"}${IMAGES}${"`"} ${WHERE}`;
   return `${leftPartReq} ${"`"}${IMAGES}${"`"}.${"`id`"} = ${imageId}`;
 };

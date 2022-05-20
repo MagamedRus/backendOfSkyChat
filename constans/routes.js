@@ -21,3 +21,4 @@ export const ROUTE_FRIENDS_ACCEPT = "/friends/accept";
 export const ROUTE_FRIENDS_ALL = "/friends/all";
 export const ROUTE_NOTIFICATIONS_ALL = "/notifications/all";
 export const ROUTE_IMAGE_NEW = "/image/new";
+export const ROUTE_IMAGE_GET = "/image/get";
