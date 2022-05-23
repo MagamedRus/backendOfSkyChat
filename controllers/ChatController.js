@@ -88,7 +88,10 @@ class ChatController {
         const [[userData]] = await conn.execute(getUserDataById(userId));
         const chatIds = userData?.userChatsDataArr.split(",") || [];
         const chatsData = await this.#getChatsDataByIds(chatIds);
-        const sendData = getOnlyUserHeadersChats(chatsData);
+        const onlyHeadersChat = getOnlyUserHeadersChats(chatsData);
+        const sendData = onlyHeadersChat.sort(
+          (a, b) => Number(b.lastChangeDate) - Number(a.lastChangeDate)
+        );
         res.json(sendData);
       }
     } catch (e) {
