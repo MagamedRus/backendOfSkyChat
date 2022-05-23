@@ -38,7 +38,7 @@ class FilesController {
       } else {
         conn = await getSyncDBConn();
         const [[imageData]] = await conn.execute(getImageByIdReq(imageId));
-        res.json({ imageData });
+        res.json(imageData);
       }
     } catch (e) {
       res.status(500).json({ message: e });
