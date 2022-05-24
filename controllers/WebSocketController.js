@@ -5,6 +5,7 @@ import {
   getAllChatsDataRequest,
   getChatDataByIdRequest,
   updateMessageData,
+  updateLastChangedDateReq,
 } from "../dbCreateRequests/ChatRequests.js";
 import { changeMessageData } from "../common/chat.js";
 import { wsReqTypes } from "../constans/types/websocket.js";
@@ -67,6 +68,7 @@ class WebSocketController {
     try {
       const conn = await getSyncDBConn();
       await conn.execute(updateMessageData(newMessagesData, message.chatId));
+      await conn.execute(updateLastChangedDateReq(message.chatId));
       conn.close();
       result.isSuccess = true;
     } catch (e) {

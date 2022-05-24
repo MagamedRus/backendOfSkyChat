@@ -12,6 +12,7 @@ import {
   SET,
 } from "../constans/db/dbRequestElements.js";
 import { CHATS_DATA } from "../constans/db/dbTableNames.js";
+import { getDateInMilliseconds } from "../common/date.js";
 
 export const createNewChatRequest = (data) => {
   const {
@@ -51,5 +52,12 @@ export const updateMessageData = (messageData, chatId) => {
 //UPDATE `chats_data` SET `imageId` = '1' WHERE `chats_data`.`id` = 73;
 export const updateChatImageIdReq = (chatId, imageId) => {
   const leftPartReq = `${UPDATE} ${CHATS_DATA} ${SET} ${"`imageId`"} = '${imageId}'`;
+  return `${leftPartReq} ${WHERE} ${CHATS_DATA}.${"`id`"} = '${chatId}'`;
+};
+
+//UPDATE `chats_data` SET `imageId` = '1' WHERE `chats_data`.`id` = 73;
+export const updateLastChangedDateReq = (chatId) => {
+  const lastChangeDate = getDateInMilliseconds();
+  const leftPartReq = `${UPDATE} ${CHATS_DATA} ${SET} ${"`lastChangeDate`"} = '${lastChangeDate}'`;
   return `${leftPartReq} ${WHERE} ${CHATS_DATA}.${"`id`"} = '${chatId}'`;
 };
