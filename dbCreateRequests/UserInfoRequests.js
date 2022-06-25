@@ -33,7 +33,7 @@ export const createUserSelfDataRequest = (data) => {
   const bodyRequestId = id ? `'${id}'` : NULL;
   const bodyRequestUniques = `${bodyRequestId}, '${login}', '${email}', '${password}',`;
   const bodyRequestName = `'${firstName}', '${secondName}', '${lastName}',`;
-  const bodyRequestDates = `'${registrationDate}', ${bPlace}, '${birthday}', ${imgId}`;
+  const bodyRequestDates = `'${registrationDate}', ${bPlace}, '${birthday}', ${imgId}, ${NULL}`;
 
   return `${leftPartRequest} ${VALUES} (${bodyRequestUniques} ${bodyRequestName} ${bodyRequestDates})`;
 };
@@ -46,6 +46,7 @@ export const updateUserDataReq = (data, userId) => {
   const lastName = `${"`lastName`"} = '${data.lastName}'`;
   const birthPlace = `${"`birthPlace`"} = '${data.birthPlace}'`;
   const imageId = `${"`imageId`"} = '${data.imageId}'`;
+  const phone = `${"`phone`"} = ${data.phone}`;
   const bodyReq = `${password}, ${firstName}, ${secondName}, ${lastName}, ${birthPlace}, ${imageId}`;
   const lastPartReq = `${WHERE} ${"`"}${USER_SELF_DATA}${"`"}.${"`id`"} = ${userId}`;
 

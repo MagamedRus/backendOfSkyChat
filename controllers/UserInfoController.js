@@ -21,7 +21,6 @@ import { createNewChatRequest } from "../dbCreateRequests/ChatRequests.js";
 import { getDateInMilliseconds } from "../common/date.js";
 import { getSaveDataUser } from "../common/filters.js";
 
-
 class UserInfoController {
   async #createAdminChat(userId) {
     let adminChatId = -1;
@@ -251,6 +250,7 @@ class UserInfoController {
           lastName: body.lastName || userData.lastName,
           birthPlace: body.birthPlace || userData.birthPlace,
           imageId: body.imageId || userData.imageId,
+          phone: body.phone || userData.phone,
         };
 
         await conn.execute(updateUserDataReq(changedData, userId));
