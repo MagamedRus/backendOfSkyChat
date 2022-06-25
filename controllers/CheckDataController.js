@@ -1,8 +1,9 @@
 import {
   NOT_FOUND_EMAIL_EXCEPTION,
   NOT_FOUND_LOGIN_EXCEPTION,
+  NOT_FOUND_PASSWORD_EXCEPTION,
 } from "../constans/types/exceptions.js";
-import { getDBConn } from "../common/sqlConnection.js";
+import { getDBConn, getSyncDBConn } from "../common/sqlConnection.js";
 import {
   getUserByEmailRequest,
   getUserByLoginRequest,
@@ -30,7 +31,7 @@ class CheckDataController {
                 } else {
                   res.json({ isExist: false });
                 }
-                pool.end()
+                pool.end();
               }
             );
           }
@@ -67,6 +68,39 @@ class CheckDataController {
     } catch (e) {
       res.status(500).json(e);
     }
+  }
+
+  async checkPassword(req, res) {
+    let conn = null;
+    const { login, password } = req.body;
+    if (!login) {
+      res.status(400).json({ message: NOT_FOUND_LOGIN_EXCEPTION });
+    } else if (!password) {
+      res.status(400).json({ message: NOT_FOUND_PASSWORD_EXCEPTION });
+    } else {
+      try {
+        const pool = getSyncDBConn();
+        pool.getConnection((err, conn) => {
+          if (err) {
+            res.status(501).json({ error: err });
+          } else {
+            const [[userData]] = pool.query(getUserByLoginRequest(login));
+            const isValidPassword = bcrypt.compareSync(
+              password,
+              userData.password
+            );
+            if (isValidPassword) {
+              res.json({ isGood: true });
+            } else {
+              res.status({ isGood: false });
+            }
+          }
+        });
+      } catch (error) {
+        res.status(500).json({ error });
+      }
+    }
+    conn && conn.close();
   }
 }
 

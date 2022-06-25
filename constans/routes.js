@@ -22,3 +22,4 @@ export const ROUTE_FRIENDS_ALL = "/friends/all";
 export const ROUTE_NOTIFICATIONS_ALL = "/notifications/all";
 export const ROUTE_IMAGE_NEW = "/image/new";
 export const ROUTE_IMAGE_GET = "/image/get";
+export const ROUTE_CHECK_PASSWORD = "/user/password";
