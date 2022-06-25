@@ -8,6 +8,7 @@ import {
   getUserByEmailRequest,
   getUserByLoginRequest,
 } from "../dbCreateRequests/UserInfoRequests.js";
+import bcrypt from "bcryptjs";
 
 class CheckDataController {
   async checkUserByEmail(req, res) {
@@ -79,24 +80,19 @@ class CheckDataController {
       res.status(400).json({ message: NOT_FOUND_PASSWORD_EXCEPTION });
     } else {
       try {
-        const pool = getSyncDBConn();
-        pool.getConnection((err, conn) => {
-          if (err) {
-            res.status(501).json({ error: err });
-          } else {
-            const [[userData]] = pool.query(getUserByLoginRequest(login));
-            const isValidPassword = bcrypt.compareSync(
-              password,
-              userData.password
-            );
-            if (isValidPassword) {
-              res.json({ isGood: true });
-            } else {
-              res.status({ isGood: false });
-            }
-          }
-        });
+        const pool = await getSyncDBConn();
+        const [[usersData]] = await pool.execute(getUserByLoginRequest(login));
+        const isValidPassword = bcrypt.compareSync(
+          password,
+          usersData.password || ""
+        );
+        if (isValidPassword) {
+          res.json({ isGood: true });
+        } else {
+          res.status({ isGood: false });
+        }
       } catch (error) {
+        console.log(error);
         res.status(500).json({ error });
       }
     }
