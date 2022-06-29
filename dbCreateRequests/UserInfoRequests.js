@@ -43,11 +43,17 @@ export const updateUserDataReq = (data, userId) => {
   const password = `${"`password`"} = '${data.password}'`;
   const firstName = `${"`firstName`"} = '${data.firstName}'`;
   const secondName = `${"`secondName`"} = '${data.secondName}'`;
-  const lastName = `${"`lastName`"} = '${data.lastName}'`;
-  const birthPlace = `${"`birthPlace`"} = '${data.birthPlace}'`;
-  const imageId = `${"`imageId`"} = '${data.imageId}'`;
-  const phone = `${"`phone`"} = ${data.phone}`;
-  const bodyReq = `${password}, ${firstName}, ${secondName}, ${lastName}, ${birthPlace}, ${imageId}`;
+  const lastName = `${"`lastName`"} = ${
+    data.lastName ? `'${data.lastName}'` : NULL
+  }`;
+  const birthPlace = `${"`birthPlace`"} = ${
+    data.birthPlace ? `'${data.birthPlace}'` : NULL
+  }`;
+  const imageId = `${"`imageId`"} =  ${
+    data.imageId ? `'${data.imageId}'` : NULL
+  }`;
+  const phone = `${"`phone`"} = ${data.phone ? `'${data.phone}'` : NULL}`;
+  const bodyReq = `${password}, ${firstName}, ${secondName}, ${lastName}, ${birthPlace}, ${imageId}, ${phone}`;
   const lastPartReq = `${WHERE} ${"`"}${USER_SELF_DATA}${"`"}.${"`id`"} = ${userId}`;
 
   return `${leftPartReq} ${bodyReq} ${lastPartReq}`;
