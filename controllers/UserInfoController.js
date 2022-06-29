@@ -249,7 +249,7 @@ class UserInfoController {
           secondName: body.secondName || userData.secondName,
           lastName: body.lastName || userData.lastName,
           birthPlace: body.birthPlace || userData.birthPlace,
-          imageId: body.imageId || userData.imageId,
+          imageId: body.imageId === undefined ? userData.imageId : body.imageId,
           phone: body.phone || userData.phone,
         };
 
