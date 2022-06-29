@@ -29,6 +29,16 @@ class FilesController {
     }
   }
 
+  async deleteImage(req, res) {
+    const { imageId } = req.body;
+    if (imageId === undefined) {
+      res.status(400).json({ error: EMPTY_IMAGE_ID });
+    } else {
+      await this.#deleteImage(imageId);
+      res.json({ status: "okay" });
+    }
+  }
+
   async getImage(req, res) {
     let conn = null;
     try {
